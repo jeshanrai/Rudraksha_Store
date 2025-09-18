@@ -1,0 +1,199 @@
+/* === Base === */
+.profile-page {
+  padding: 2rem 1rem;
+  background: #f3f4f6; /* soft gray like homepage */
+  min-height: 100vh;
+  animation: fadeInProfile 0.6s ease-in-out;
+}
+
+@keyframes fadeInProfile {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.container {
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+/* Grid layout */
+.profile-layout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 2rem;
+}
+
+@media (max-width: 768px) {
+  .profile-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* === Sidebar === */
+.profile-sidebar {
+  background: #ffffff; /* slight contrast to page bg */
+  border-radius: 1rem;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  padding: 1.5rem 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Profile Header */
+.profile-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.profile-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: #ede9fe; /* light purple background */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 0.75rem;
+}
+
+.avatar-icon {
+  width: 40px;
+  height: 40px;
+  color: #7c3aed; /* purple accent */
+}
+
+.profile-name {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1f2937; /* dark text */
+}
+
+.profile-email {
+  font-size: 0.9rem;
+  color: #6b7280; /* gray text */
+}
+
+/* Sidebar Menu */
+.profile-menu {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.menu-item {
+  width: 100%;
+  text-align: left;
+  padding: 0.6rem 1rem;
+  border: none;
+  background: transparent;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #374151;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+.menu-item:hover {
+  background: #ede9fe; /* light purple hover */
+  color: #7c3aed;
+}
+
+.logout-btn {
+  color: #dc2626;
+}
+
+.logout-btn:hover {
+  background: #fee2e2;
+}
+
+/* === Content === */
+.profile-content {
+  background: #ffffff; /* white card but on gray bg */
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+.section-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 1rem;
+}
+
+/* Orders List */
+.orders-list {
+  display: grid;
+  gap: 1rem;
+}
+
+/* Order Card */
+.order-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 1rem;
+  background: #fafafa; /* off-white, matches homepage */
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.order-card:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  transform: translateY(-2px);
+}
+
+/* Order Header */
+.order-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.order-id {
+  font-weight: 600;
+  color: #1f2937;
+  font-size: 1rem;
+}
+
+.order-date {
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+.order-status {
+  padding: 0.2rem 0.6rem;
+  border-radius: 0.5rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+/* Status colors */
+.order-status.delivered {
+  background: #ecfdf5;
+  color: #065f46;
+}
+
+.order-status.processing {
+  background: #ede9fe;
+  color: #7c3aed;
+}
+
+.order-status.pending {
+  background: #fff7ed;
+  color: #92400e;
+}
+
+.order-items,
+.order-total {
+  font-size: 0.9rem;
+  color: #374151;
+  margin: 0.25rem 0;
+}
+
+.order-total {
+  font-weight: 600;
+}

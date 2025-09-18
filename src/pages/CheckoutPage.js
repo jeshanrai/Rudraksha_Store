@@ -1,6 +1,9 @@
+// src/pages/CheckoutPage.js
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useApp } from '../context/AppContext';
 
-const CheckoutPage = ({ cart, getCartTotal, setCart, setCurrentPage }) => {
+const CheckoutPage = () => {
   const [checkoutData, setCheckoutData] = useState({
     email: '',
     firstName: '',
@@ -13,6 +16,9 @@ const CheckoutPage = ({ cart, getCartTotal, setCart, setCurrentPage }) => {
     paymentMethod: 'card'
   });
 
+  const { cart, getCartTotal, setCart } = useApp();
+  const navigate = useNavigate();
+  
   const total = getCartTotal();
   const tax = Math.round(total * 0.18);
   const finalTotal = Math.round(total * 1.18);
@@ -22,8 +28,13 @@ const CheckoutPage = ({ cart, getCartTotal, setCart, setCurrentPage }) => {
     // Mock order submission
     alert('Order placed successfully! Thank you for your purchase.');
     setCart([]);
-    setCurrentPage('home');
+    navigate('/');
   };
+
+  if (cart.length === 0) {
+    navigate('/cart');
+    return null;
+  }
 
   return (
     <div className="checkout-page">

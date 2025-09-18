@@ -1,38 +1,58 @@
-import React, { useState } from 'react';
+// src/pages/ProductsPage.js
+import React, { useState, useMemo } from 'react';
 import { Filter, Grid, List } from 'lucide-react';
 import ProductCard from '../components/ProductCard/ProductCard';
-import { mockProducts } from '../data/mockData';
+import LoadingSpinner from '../components/common/LoadingSpinner';
+import { useApp } from '../context/AppContext';
 
-const ProductsPage = ({ 
-  searchTerm, 
-  filters, 
-  setFilters, 
-  sortBy, 
-  setSortBy, 
-  viewMode, 
-  setViewMode, 
-  addToCart 
-}) => {
+const ProductsPage = () => {
   const [showFilters, setShowFilters] = useState(false);
-  const [currentProducts, setCurrentProducts] = useState(mockProducts);
+  const { 
+    products, 
+    isLoading, 
+    searchTerm, 
+    filters, 
+    setFilters, 
+    sortBy, 
+    setSortBy, 
+    viewMode, 
+    setViewMode,
+    resetFilters 
+  } = useApp();
 
-  const filteredProducts = currentProducts.filter(product => {
-    if (searchTerm && !product.name.toLowerCase().includes(searchTerm.toLowerCase())) {
-      return false;
-    }
-    if (filters.mukhi.length && !filters.mukhi.includes(product.mukhi)) {
-      return false;
-    }
-    if (product.price < filters.priceRange[0] || product.price > filters.priceRange[1]) {
-      return false;
-    }
-    return true;
-  });
+  const filteredProducts = useMemo(() => {
+    if (isLoading) return [];
+    
+    return products.filter(product => {
+      if (searchTerm && !product.name.toLowerCase().includes(searchTerm.toLowerCase())) {
+        return false;
+      }
+      if (filters.mukhi.length && !filters.mukhi.includes(product.mukhi)) {
+        return false;
+      }
+      if (product.price < filters.priceRange[0] || product.price > filters.priceRange[1]) {
+        return false;
+      }
+      return true;
+    }).sort((a, b) => {
+      switch (sortBy) {
+        case 'price-low':
+          return a.price - b.price;
+        case 'price-high':
+          return b.price - a.price;
+        case 'rating':
+          return b.rating - a.rating;
+        case 'newest':
+          return b.id - a.id;
+        default: // 'featured'
+          return a.featured === b.featured ? 0 : a.featured ? -1 : 1;
+      }
+    });
+  }, [products, isLoading, searchTerm, filters, sortBy]);
 
-  const handleViewProduct = (productId) => {
-    // This would be handled by routing in a real app
-    window.location.hash = `#product-${productId}`;
-  };
+  if (isLoading) {
+    return <LoadingSpinner />;
+  }
 
   return (
     <div className="products-page">
@@ -44,12 +64,14 @@ const ProductsPage = ({
               <button
                 onClick={() => setViewMode('grid')}
                 className={`view-btn ${viewMode === 'grid' ? 'view-btn-active' : ''}`}
+                aria-label="Grid view"
               >
                 <Grid className="view-icon" />
               </button>
               <button
                 onClick={() => setViewMode('list')}
                 className={`view-btn ${viewMode === 'list' ? 'view-btn-active' : ''}`}
+                aria-label="List view"
               >
                 <List className="view-icon" />
               </button>
@@ -58,6 +80,7 @@ const ProductsPage = ({
               value={sortBy} 
               onChange={(e) => setSortBy(e.target.value)}
               className="sort-select"
+              aria-label="Sort by"
             >
               <option value="featured">Featured</option>
               <option value="price-low">Price: Low to High</option>
@@ -68,6 +91,7 @@ const ProductsPage = ({
             <button
               onClick={() => setShowFilters(!showFilters)}
               className="filter-btn"
+              aria-label="Filters"
             >
               <Filter className="filter-icon" />
               <span>Filters</span>
@@ -91,13 +115,13 @@ const ProductsPage = ({
                       checked={filters.mukhi.includes(mukhi)}
                       onChange={(e) => {
                         if (e.target.checked) {
-                          setFilters(prev => ({ ...prev, mukhi: [...prev.mukhi, mukhi] }));
+                          setFilters({ ...filters, mukhi: [...filters.mukhi, mukhi] });
                         } else {
-                          setFilters(prev => ({ ...prev, mukhi: prev.mukhi.filter(m => m !== mukhi) }));
+                          setFilters({ ...filters, mukhi: filters.mukhi.filter(m => m !== mukhi) });
                         }
                       }}
                     />
-                    {mukhi} Mukhi ({mockProducts.filter(p => p.mukhi === mukhi).length})
+                    {mukhi} Mukhi ({products.filter(p => p.mukhi === mukhi).length})
                   </label>
                 ))}
               </div>
@@ -111,7 +135,7 @@ const ProductsPage = ({
                   min="0" 
                   max="5000" 
                   value={filters.priceRange[1]}
-                  onChange={(e) => setFilters(prev => ({ ...prev, priceRange: [0, parseInt(e.target.value)] }))}
+                  onChange={(e) => setFilters({ ...filters, priceRange: [0, parseInt(e.target.value)] })}
                   className="price-slider"
                 />
                 <div className="price-labels">
@@ -122,7 +146,7 @@ const ProductsPage = ({
             </div>
 
             <button 
-              onClick={() => setFilters({ mukhi: [], priceRange: [0, 5000], category: [] })}
+              onClick={resetFilters}
               className="clear-filters-btn"
             >
               Clear All Filters
@@ -138,11 +162,15 @@ const ProductsPage = ({
                   key={product.id} 
                   product={product} 
                   viewMode={viewMode}
-                  onView={handleViewProduct}
-                  onAddToCart={addToCart}
                 />
               ))}
             </div>
+            {filteredProducts.length === 0 && (
+              <div className="no-products">
+                <h3>No products found</h3>
+                <p>Try adjusting your filters or search term</p>
+              </div>
+            )}
           </div>
         </div>
       </div>

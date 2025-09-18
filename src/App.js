@@ -1,103 +1,45 @@
-import React, { useState } from 'react';
+// src/App.js
+import React, { Suspense, lazy } from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { AppProvider } from './context/AppContext';
 import Header from './components/Header/Header';
 import Footer from './components/Footer/Footer';
-import HomePage from './pages/HomePage';
-import ProductsPage from './pages/ProductsPage';
-import ProductDetailPage from './pages/ProductDetailPage';
-import CartPage from './pages/CartPage';
-import CheckoutPage from './pages/CheckoutPage';
-import LoginPage from './pages/LoginPage';
-import ProfilePage from './pages/ProfilePage';
-import { useCart } from './hooks/useCart';
+import LoadingSpinner from './components/common/LoadingSpinner';
 import './styles.css';
 
+// Lazy load pages
+const HomePage = lazy(() => import('./pages/HomePage'));
+const ProductsPage = lazy(() => import('./pages/ProductsPage'));
+const ProductDetailPage = lazy(() => import('./pages/ProductDetailPage'));
+const CartPage = lazy(() => import('./pages/CartPage'));
+const CheckoutPage = lazy(() => import('./pages/CheckoutPage'));
+const LoginPage = lazy(() => import('./pages/LoginPage'));
+const ProfilePage = lazy(() => import('./pages/ProfilePage'));
+const NotFoundPage = lazy(() => import('./pages/NotFoundPage'));
+
 function App() {
-  const [currentPage, setCurrentPage] = useState('home');
-  const [user, setUser] = useState(null);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filters, setFilters] = useState({
-    mukhi: [],
-    priceRange: [0, 5000],
-    category: []
-  });
-  const [sortBy, setSortBy] = useState('featured');
-  const [viewMode, setViewMode] = useState('grid');
-
-  
-  
-  const {
-    cart,
-    setCart,
-    addToCart,
-    updateCartQuantity,
-    removeFromCart,
-    getCartTotal
-  } = useCart();
-
-  const renderCurrentPage = () => {
-    switch (currentPage) {
-      case 'home':
-        return <HomePage setCurrentPage={setCurrentPage} addToCart={addToCart} />;
-      case 'products':
-        return (
-          <ProductsPage 
-            searchTerm={searchTerm}
-            filters={filters}
-            setFilters={setFilters}
-            sortBy={sortBy}
-            setSortBy={setSortBy}
-            viewMode={viewMode}
-            setViewMode={setViewMode}
-            addToCart={addToCart}
-          />
-        );
-      case 'cart':
-        return (
-          <CartPage 
-            cart={cart}
-            updateCartQuantity={updateCartQuantity}
-            removeFromCart={removeFromCart}
-            getCartTotal={getCartTotal}
-            setCurrentPage={setCurrentPage}
-          />
-        );
-      case 'checkout':
-        return (
-        <CheckoutPage
-  cart={cart}
-  getCartTotal={getCartTotal}
-  setCart={setCart} // now works
-  setCurrentPage={setCurrentPage}
-/>
-
-        );
-      case 'login':
-        return <LoginPage setUser={setUser} setCurrentPage={setCurrentPage} />;
-      case 'profile':
-        return <ProfilePage user={user} setUser={setUser} setCurrentPage={setCurrentPage} />;
-      default:
-        if (currentPage.startsWith('product-')) {
-          const productId = currentPage.split('-')[1];
-          return <ProductDetailPage productId={productId} addToCart={addToCart} />;
-        }
-        return <HomePage setCurrentPage={setCurrentPage} addToCart={addToCart} />;
-    }
-  };
-
   return (
-    <div className="App">
-      <Header 
-        cart={cart}
-        setCurrentPage={setCurrentPage}
-        user={user}
-        searchTerm={searchTerm}
-        setSearchTerm={setSearchTerm}
-      />
-      <main>
-        {renderCurrentPage()}
-      </main>
-      <Footer />
-    </div>
+    <AppProvider>
+      <BrowserRouter>
+        <div className="App">
+          <Header />
+          <main>
+            <Suspense fallback={<LoadingSpinner />}>
+              <Routes>
+                <Route path="/" element={<HomePage />} />
+                <Route path="/products" element={<ProductsPage />} />
+                <Route path="/product/:id" element={<ProductDetailPage />} />
+                <Route path="/cart" element={<CartPage />} />
+                <Route path="/checkout" element={<CheckoutPage />} />
+                <Route path="/login" element={<LoginPage />} />
+                <Route path="/profile" element={<ProfilePage />} />
+                <Route path="*" element={<NotFoundPage />} />
+              </Routes>
+            </Suspense>
+          </main>
+        </div>
+      </BrowserRouter>
+    </AppProvider>
   );
 }
 

@@ -1,7 +1,12 @@
+// src/pages/CartPage.js
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { ShoppingCart, Plus, Minus, X } from 'lucide-react';
+import { useApp } from '../context/AppContext';
 
-const CartPage = ({ cart, updateCartQuantity, removeFromCart, getCartTotal, setCurrentPage }) => {
+const CartPage = () => {
+  const { cart, updateCartQuantity, removeFromCart, getCartTotal } = useApp();
+  
   const total = getCartTotal();
   const tax = Math.round(total * 0.18);
   const finalTotal = Math.round(total * 1.18);
@@ -12,12 +17,9 @@ const CartPage = ({ cart, updateCartQuantity, removeFromCart, getCartTotal, setC
         <ShoppingCart className="empty-cart-icon" />
         <h2 className="empty-cart-title">Your cart is empty</h2>
         <p className="empty-cart-message">Add some sacred Rudraksha beads to get started</p>
-        <button 
-          onClick={() => setCurrentPage('products')}
-          className="primary-btn"
-        >
+        <Link to="/products" className="primary-btn">
           Continue Shopping
-        </button>
+        </Link>
       </div>
     );
   }
@@ -42,6 +44,7 @@ const CartPage = ({ cart, updateCartQuantity, removeFromCart, getCartTotal, setC
                       <button 
                         onClick={() => updateCartQuantity(item.id, item.quantity - 1)}
                         className="quantity-btn"
+                        aria-label="Decrease quantity"
                       >
                         <Minus className="quantity-icon" />
                       </button>
@@ -49,6 +52,7 @@ const CartPage = ({ cart, updateCartQuantity, removeFromCart, getCartTotal, setC
                       <button 
                         onClick={() => updateCartQuantity(item.id, item.quantity + 1)}
                         className="quantity-btn"
+                        aria-label="Increase quantity"
                       >
                         <Plus className="quantity-icon" />
                       </button>
@@ -58,6 +62,7 @@ const CartPage = ({ cart, updateCartQuantity, removeFromCart, getCartTotal, setC
                       <button 
                         onClick={() => removeFromCart(item.id)}
                         className="remove-item-btn"
+                        aria-label="Remove item"
                       >
                         <X className="remove-icon" />
                       </button>
@@ -89,12 +94,9 @@ const CartPage = ({ cart, updateCartQuantity, removeFromCart, getCartTotal, setC
                 <span>₹{finalTotal}</span>
               </div>
             </div>
-            <button 
-              onClick={() => setCurrentPage('checkout')}
-              className="checkout-btn"
-            >
+            <Link to="/checkout" className="checkout-btn">
               Proceed to Checkout
-            </button>
+            </Link>
           </div>
         </div>
       </div>

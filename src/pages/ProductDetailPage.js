@@ -1,21 +1,36 @@
+// src/pages/ProductDetailPage.js
 import React, { useState } from 'react';
+import { useParams, Link } from 'react-router-dom';
 import { Star, Heart, Plus, Minus } from 'lucide-react';
 import ProductCard from '../components/ProductCard/ProductCard';
-import { mockProducts } from '../data/mockData';
+import LoadingSpinner from '../components/common/LoadingSpinner';
+import { useApp } from '../context/AppContext';
 
-const ProductDetailPage = ({ productId, addToCart }) => {
-  const product = mockProducts.find(p => p.id === parseInt(productId));
+const ProductDetailPage = () => {
+  const { id } = useParams();
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
+  const { products, isLoading, addToCart } = useApp();
+  
+  const product = products.find(p => p.id === parseInt(id));
+  const relatedProducts = products.filter(p => p.id !== product?.id && p.mukhi === product?.mukhi).slice(0, 3);
 
-  if (!product) return <div>Product not found</div>;
+  if (isLoading) {
+    return <LoadingSpinner />;
+  }
 
-  const relatedProducts = mockProducts.filter(p => p.id !== product.id && p.mukhi === product.mukhi).slice(0, 3);
-
-  const handleViewProduct = (productId) => {
-    // This would be handled by routing in a real app
-    window.location.hash = `#product-${productId}`;
-  };
+  if (!product) {
+    return (
+      <div className="product-not-found">
+        <div className="container">
+          <h2>Product not found</h2>
+          <Link to="/products" className="primary-btn">
+            Back to Products
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="product-detail-page">
@@ -28,6 +43,7 @@ const ProductDetailPage = ({ productId, addToCart }) => {
                 src={product.images[selectedImage]} 
                 alt={product.name}
                 className="product-detail-image"
+                loading="eager"
               />
             </div>
             <div className="image-thumbnails">
@@ -36,6 +52,7 @@ const ProductDetailPage = ({ productId, addToCart }) => {
                   key={index}
                   onClick={() => setSelectedImage(index)}
                   className={`thumbnail-btn ${selectedImage === index ? 'thumbnail-btn-active' : ''}`}
+                  aria-label={`View image ${index + 1}`}
                 >
                   <img src={image} alt="" className="thumbnail-image" />
                 </button>
@@ -50,7 +67,10 @@ const ProductDetailPage = ({ productId, addToCart }) => {
             <div className="product-rating">
               <div className="stars">
                 {[...Array(5)].map((_, i) => (
-                  <Star key={i} className={`star ${i < Math.floor(product.rating) ? 'star-filled' : ''}`} />
+                  <Star 
+                    key={i} 
+                    className={`star ${i < Math.floor(product.rating) ? 'star-filled' : ''}`} 
+                  />
                 ))}
               </div>
               <span className="review-count">({product.reviews} reviews)</span>
@@ -85,6 +105,7 @@ const ProductDetailPage = ({ productId, addToCart }) => {
                 <button 
                   onClick={() => setQuantity(Math.max(1, quantity - 1))}
                   className="quantity-btn"
+                  aria-label="Decrease quantity"
                 >
                   <Minus className="quantity-icon" />
                 </button>
@@ -92,6 +113,7 @@ const ProductDetailPage = ({ productId, addToCart }) => {
                 <button 
                   onClick={() => setQuantity(quantity + 1)}
                   className="quantity-btn"
+                  aria-label="Increase quantity"
                 >
                   <Plus className="quantity-icon" />
                 </button>
@@ -102,7 +124,7 @@ const ProductDetailPage = ({ productId, addToCart }) => {
               >
                 Add to Cart
               </button>
-              <button className="wishlist-btn-large">
+              <button className="wishlist-btn-large" aria-label="Add to wishlist">
                 <Heart className="wishlist-icon-large" />
               </button>
             </div>
@@ -115,12 +137,7 @@ const ProductDetailPage = ({ productId, addToCart }) => {
             <h2 className="section-heading">Related Products</h2>
             <div className="related-products-grid">
               {relatedProducts.map(product => (
-                <ProductCard 
-                  key={product.id} 
-                  product={product} 
-                  onView={handleViewProduct}
-                  onAddToCart={addToCart}
-                />
+                <ProductCard key={product.id} product={product} />
               ))}
             </div>
           </div>

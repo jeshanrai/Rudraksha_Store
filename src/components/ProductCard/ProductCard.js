@@ -1,8 +1,13 @@
+
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Heart, Star, Eye } from 'lucide-react';
+import { useApp } from '../../context/AppContext';
 import './ProductCard.css';
 
-const ProductCard = ({ product, viewMode = 'grid', onView, onAddToCart }) => {
+const ProductCard = ({ product, viewMode = 'grid' }) => {
+  const { addToCart } = useApp();
+
   return (
     <div className={`product-card ${viewMode === 'list' ? 'product-card-list' : ''}`}>
       <div className="product-image-container">
@@ -10,13 +15,14 @@ const ProductCard = ({ product, viewMode = 'grid', onView, onAddToCart }) => {
           src={product.image} 
           alt={product.name}
           className={`product-image ${viewMode === 'list' ? 'product-image-list' : ''}`}
+          loading="lazy"
         />
         {product.originalPrice > product.price && (
           <span className="discount-badge">
             {Math.round((1 - product.price / product.originalPrice) * 100)}% OFF
           </span>
         )}
-        <button className="wishlist-btn">
+        <button className="wishlist-btn" aria-label="Add to wishlist">
           <Heart className="wishlist-icon" />
         </button>
       </div>
@@ -25,7 +31,10 @@ const ProductCard = ({ product, viewMode = 'grid', onView, onAddToCart }) => {
         <div className="rating-container">
           <div className="stars">
             {[...Array(5)].map((_, i) => (
-              <Star key={i} className={`star ${i < Math.floor(product.rating) ? 'star-filled' : ''}`} />
+              <Star 
+                key={i} 
+                className={`star ${i < Math.floor(product.rating) ? 'star-filled' : ''}`} 
+              />
             ))}
           </div>
           <span className="review-count">({product.reviews} reviews)</span>
@@ -39,15 +48,17 @@ const ProductCard = ({ product, viewMode = 'grid', onView, onAddToCart }) => {
             )}
           </div>
           <div className="product-actions">
-            <button 
-              onClick={() => onView(product.id)}
+            <Link 
+              to={`/product/${product.id}`}
               className="view-btn"
+              aria-label="View product details"
             >
               <Eye className="action-icon" />
-            </button>
+            </Link>
             <button 
-              onClick={() => onAddToCart(product)}
+              onClick={() => addToCart(product)}
               className="add-to-cart-btn"
+              aria-label="Add to cart"
             >
               Add to Cart
             </button>
