@@ -1,0 +1,264 @@
+/* General Styles */
+body {
+  font-family: 'Poppins', sans-serif;
+  color: #1a1a1a;
+  background-color: #fdfbf6;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+/* Hero Section */
+.hero-section {
+  background: linear-gradient(135deg, #f5f0e1 0%, #e3e0d6 100%);
+  padding: 6rem 0;
+  display: flex;
+  align-items: center;
+  animation: fadeIn 1.2s ease-in-out;
+}
+
+.hero-grid {
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.hero-title {
+  font-size: 3rem;
+  line-height: 1.2;
+  font-weight: 700;
+}
+
+.hero-title-accent {
+  color: #d49f56;
+  display: inline-block;
+  position: relative;
+}
+
+.hero-title-accent::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 6px;
+  background: #f6d9a1;
+  bottom: 0;
+  left: 0;
+  border-radius: 3px;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.5s ease;
+}
+
+.hero-title-accent:hover::after {
+  transform: scaleX(1);
+}
+
+.hero-description {
+  margin: 1.5rem 0;
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: #555;
+}
+
+.hero-actions button {
+  margin-right: 1rem;
+  padding: 0.8rem 2rem;
+  border-radius: 50px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.primary-btn {
+  background: #d49f56;
+  color: white;
+  border: none;
+}
+
+.primary-btn:hover {
+  background: #b5833b;
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+
+.secondary-btn {
+  background: transparent;
+  border: 2px solid #d49f56;
+  color: #d49f56;
+}
+
+.secondary-btn:hover {
+  background: #d49f56;
+  color: white;
+  transform: translateY(-3px);
+}
+
+/* Categories Section */
+.categories-section {
+  padding: 4rem 0;
+  background: #fff7f0;
+}
+
+.categories-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.category-card {
+  background: white;
+  padding: 2rem 1.5rem;
+  border-radius: 20px;
+  text-align: center;
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+  cursor: pointer;
+}
+
+.category-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+}
+
+.category-icon {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.category-name {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.category-description {
+  font-size: 0.95rem;
+  color: #666;
+}
+
+/* Featured Products */
+.featured-section {
+  padding: 4rem 0;
+  animation: fadeIn 1.2s ease-in-out;
+}
+
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+/* Testimonials */
+.testimonials-section {
+  background: #f5f0e1;
+  padding: 4rem 0;
+}
+
+.testimonials-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.testimonial-card {
+  background: white;
+  padding: 2rem;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+  transition: transform 0.4s ease;
+}
+
+.testimonial-card:hover {
+  transform: translateY(-5px);
+}
+
+.testimonial-rating {
+  display: flex;
+  gap: 0.3rem;
+  margin-bottom: 1rem;
+}
+
+.star {
+  color: #ccc;
+  transition: color 0.3s ease;
+}
+
+.star-filled {
+  color: #d49f56;
+}
+
+.testimonial-text {
+  font-style: italic;
+  margin-bottom: 1rem;
+}
+
+.testimonial-author {
+  font-weight: 600;
+  color: #333;
+}
+
+/* Newsletter Section */
+.newsletter-section {
+  background: #fff7f0;
+  padding: 4rem 0;
+  text-align: center;
+}
+
+.newsletter-title {
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.newsletter-description {
+  margin: 1rem 0 2rem 0;
+  color: #555;
+}
+
+.newsletter-form {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.newsletter-input {
+  padding: 0.8rem 1.2rem;
+  border-radius: 50px;
+  border: 1px solid #ccc;
+  min-width: 280px;
+  transition: all 0.3s ease;
+}
+
+.newsletter-input:focus {
+  outline: none;
+  border-color: #d49f56;
+  box-shadow: 0 0 0 2px rgba(212,159,86,0.2);
+}
+
+.newsletter-btn {
+  background: #d49f56;
+  color: white;
+  border: none;
+  padding: 0.8rem 2rem;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.newsletter-btn:hover {
+  background: #b5833b;
+  transform: translateY(-3px);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  0% { opacity: 0; transform: translateY(30px);}
+  100% { opacity: 1; transform: translateY(0);}
+}
