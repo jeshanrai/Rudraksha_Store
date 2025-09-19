@@ -1,109 +1,124 @@
-// src/pages/LoginPage.js
-import React, { useState } from 'react';
+// LoginPage.js
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { useApp } from '../context/AppContext';
+import { useAuth } from '../context/AuthContext';
+import { jwtDecode } from 'jwt-decode';
+
+import './LoginPage.css';
 
 const LoginPage = () => {
-  const [isLogin, setIsLogin] = useState(true);
+  const navigate = useNavigate();
+  const { login, isAuthenticated } = useAuth();
+
   const [formData, setFormData] = useState({
     email: '',
     password: '',
-    firstName: '',
-    lastName: ''
   });
-  const [isLoading, setIsLoading] = useState(false);
-  
-  const { setUser } = useApp();
-  const navigate = useNavigate();
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsLoading(true);
-    
-    try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Mock authentication
-      setUser({ name: formData.firstName || 'User', email: formData.email });
-      navigate('/profile');
-    } catch (error) {
-      console.error('Login error:', error);
-    } finally {
-      setIsLoading(false);
+  // Redirect if already logged in
+  useEffect(() => {
+    if (isAuthenticated()) {
+      const token = localStorage.getItem('token');
+      if (token) {
+        try {
+          const decodedToken = jwtDecode(token);
+          if (decodedToken.role === 'admin') {
+            navigate('/admin/dashboard');
+          } else {
+            navigate('/profile');
+          }
+        } catch (err) {
+          console.error('Token decode error:', err);
+        }
+      }
     }
+  }, [isAuthenticated, navigate]);
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const handleSubmit = async (e) => {
+  e.preventDefault();
+  setError('');
+  setLoading(true);
+
+  try {
+    const res = await fetch('http://localhost:5000/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(formData),
+    });
+
+    // Check if response is JSON
+    const contentType = res.headers.get('content-type');
+    if (!res.ok) {
+      let errorMsg = 'Login failed';
+      if (contentType && contentType.includes('application/json')) {
+        const errorData = await res.json();
+        errorMsg = errorData.message || errorMsg;
+      } else {
+        const text = await res.text();
+        errorMsg = text || errorMsg;
+      }
+      throw new Error(errorMsg);
+    }
+
+    // Parse JSON only if OK
+    const data = await res.json();
+
+    // Save token and user in localStorage
+    localStorage.setItem('token', data.token);
+    localStorage.setItem('user', JSON.stringify(data.user));
+
+    // Redirect based on role
+    if (data.user.role === 'admin') navigate('/admin/dashboard');
+    else navigate('/profile');
+
+  } catch (err) {
+    console.error(err);
+    setError(err.message);
+  } finally {
+    setLoading(false);
+  }
+};
+
+
   return (
-    <div className="login-page">
-      <div className="login-container">
-        <h2 className="login-title">
-          {isLogin ? 'Sign In' : 'Create Account'}
-        </h2>
-        
-        <form onSubmit={handleSubmit} className="login-form">
-          {!isLogin && (
-            <div className="form-grid">
-              <input
-                type="text"
-                placeholder="First Name"
-                required
-                value={formData.firstName}
-                onChange={(e) => setFormData({...formData, firstName: e.target.value})}
-                className="form-input"
-                disabled={isLoading}
-              />
-              <input
-                type="text"
-                placeholder="Last Name"
-                required
-                value={formData.lastName}
-                onChange={(e) => setFormData({...formData, lastName: e.target.value})}
-                className="form-input"
-                disabled={isLoading}
-              />
-            </div>
-          )}
-          
+    <div className="login-container">
+      <div className="login-card">
+        <h2>Sign in to your account</h2>
+        <p className="register-link">
+          Or <Link to="/register">create a new account</Link>
+        </p>
+
+        <form onSubmit={handleSubmit}>
+          {error && <div className="error">{error}</div>}
+
           <input
             type="email"
-            placeholder="Email"
-            required
+            name="email"
+            placeholder="Email Address"
             value={formData.email}
-            onChange={(e) => setFormData({...formData, email: e.target.value})}
-            className="form-input"
-            disabled={isLoading}
+            onChange={handleChange}
+            required
           />
-          
+
           <input
             type="password"
+            name="password"
             placeholder="Password"
-            required
             value={formData.password}
-            onChange={(e) => setFormData({...formData, password: e.target.value})}
-            className="form-input"
-            disabled={isLoading}
+            onChange={handleChange}
+            required
           />
-          
-          <button 
-            type="submit"
-            className="login-btn"
-            disabled={isLoading}
-          >
-            {isLoading ? 'Processing...' : isLogin ? 'Sign In' : 'Create Account'}
+
+          <button type="submit" disabled={loading}>
+            {loading ? 'Signing in...' : 'Sign in'}
           </button>
         </form>
-
-        <p className="auth-switch">
-          {isLogin ? "Don't have an account?" : "Already have an account?"}
-          <button 
-            onClick={() => setIsLogin(!isLogin)}
-            className="auth-switch-btn"
-            disabled={isLoading}
-          >
-            {isLogin ? 'Sign Up' : 'Sign In'}
-          </button>
-        </p>
       </div>
     </div>
   );

@@ -1,9 +1,9 @@
-/* GENERAL */
+
 .container {
   width: 90%;
   max-width: 1200px;
   margin: auto;
-  padding: 3rem 0;
+  padding: 1rem 0;
   overflow: hidden;
 }
 
@@ -203,7 +203,7 @@
 }
 .newsletter-description {
   font-size: 1rem;
-  color: #444;
+  color: #252424 !important;
   margin-bottom: 1.5rem;
 }
 .newsletter-form {
@@ -222,7 +222,7 @@
 }
 .newsletter-btn {
   background: linear-gradient(90deg, #ff8a00, #e52e71);
-  color: #fff;
+  color: #121111 !important;
   border: none;
   padding: 0.8rem 1.8rem;
   border-radius: 999px;

@@ -54,31 +54,46 @@
   color: #333;
 }
 
-/* ============ Navigation Links ============ */
+/* Nav links & buttons */
+.nav-link {
+  background: none;
+  border: none;
+  color: #374151; /* dark gray text */
+  font-weight: 500;
+  font-size: 0.95rem;
+  cursor: pointer;
+  text-decoration: none;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.5rem;
+  transition: color 0.3s ease, background 0.3s ease;
+}
+
+/* Hover effect */
+.nav-link:hover {
+  color: #7c3aed; /* purple accent */
+  background: #ede9fe; /* light purple highlight */
+}
+
+/* Optional: active state */
+.nav-link.active {
+  color: #7c3aed;
+}
+
+/* Layout for nav container (desktop) */
 .nav {
   display: flex;
-  gap: 1.5rem;
+  gap: 1rem;
+  align-items: center;
 }
 
-.nav-link {
-  color: #333;
-  font-size: 0.95rem;
-  text-decoration: none;
-  font-weight: 500;
-  position: relative;
-  transition: color 0.3s ease;
+/* Mobile menu (if nav-open) */
+.nav-open {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1rem 0;
 }
 
-.nav-link::after {
-  content: "";
-  position: absolute;
-  bottom: -4px;
-  left: 0;
-  width: 0%;
-  height: 2px;
-  background-color: #7c3aed;
-  transition: width 0.3s ease;
-}
 
 .nav-link:hover {
   color: #7c3aed;
