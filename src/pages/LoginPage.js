@@ -69,13 +69,16 @@ const LoginPage = () => {
     // Parse JSON only if OK
     const data = await res.json();
 
-    // Save token and user in localStorage
-    localStorage.setItem('token', data.token);
-    localStorage.setItem('user', JSON.stringify(data.user));
-
-    // Redirect based on role
-    if (data.user.role === 'admin') navigate('/admin/dashboard');
-    else navigate('/profile');
+    // Store token and redirect based on role
+    if (data.user.role === 'admin') {
+      localStorage.setItem('adminToken', data.token); // Admin token
+      localStorage.setItem('adminUser', JSON.stringify(data.user));
+      navigate('/admin/dashboard');
+    } else {
+      localStorage.setItem('userToken', data.token); // User token
+      localStorage.setItem('user', JSON.stringify(data.user));
+      navigate('/profile');
+    }
 
   } catch (err) {
     console.error(err);

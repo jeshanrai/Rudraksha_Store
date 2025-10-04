@@ -1,0 +1,196 @@
+/* ==============================
+   Admin Layout Base
+============================== */
+.admin-dashboard {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: #f8f9fa;
+  color: #333;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* ==============================
+   Navbar
+============================== */
+.navbar {
+  height: 64px;
+  background: #1e293b;
+  color: #fff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+}
+
+.navbar h1 {
+  font-size: 1.2rem;
+  margin: 0;
+}
+
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.btn.btn-red {
+  background: #dc2626;
+  border: none;
+  padding: 6px 12px;
+  color: #fff;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background 0.2s;
+}
+
+.btn.btn-red:hover {
+  background: #b91c1c;
+}
+
+/* ==============================
+   Layout container
+============================== */
+.dashboard-container {
+  display: flex;
+  flex: 1;
+  height: calc(100vh - 64px);
+  overflow: hidden;
+}
+
+/* ==============================
+   Sidebar
+============================== */
+.sidebar {
+  width: 220px;
+  background: #fff;
+  min-height: calc(100vh - 64px);
+  padding: 1rem;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s ease-in-out;
+}
+
+/* Sidebar link */
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  margin-bottom: 0.5rem;
+  color: #333;
+  text-decoration: none;
+  border-radius: 5px;
+  font-size: 0.95rem;
+  transition: background 0.3s, color 0.3s;
+}
+
+/* Fix icon size inside sidebar */
+.sidebar-link svg {
+  width: 18px;     /* smaller, consistent width */
+  height: 18px;    /* smaller, consistent height */
+  margin-right: 0.75rem;
+  flex-shrink: 0;
+  color: #555;     /* optional: softer color */
+}
+
+
+.sidebar-link:hover {
+  background-color: #f3f4f6;
+  color: #111;
+}
+
+.sidebar-link.active {
+  background-color: #e0e7ff;
+  font-weight: 600;
+  color: #111;
+}
+
+/* ==============================
+   Main content
+============================== */
+.main-content {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+  background: #f8fafc;
+}
+
+/* ==============================
+   Cards & Grids (shared)
+============================== */
+.stats-grid,
+.summary-cards,
+.actions-grid {
+  display: grid;
+  gap: 20px;
+}
+
+.stats-grid {
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  margin-bottom: 20px;
+}
+
+.summary-cards {
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  margin-top: 30px;
+}
+
+.stat-card,
+.summary-card,
+.action-card {
+  background: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  text-align: center;
+}
+
+.stat-card h2,
+.summary-card h2 {
+  margin: 10px 0 0;
+  font-size: 1.4rem;
+  color: #111;
+}
+
+.action-card {
+  text-decoration: none;
+  color: #111;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.action-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+}
+
+/* ==============================
+   Responsive (Mobile)
+============================== */
+@media (max-width: 768px) {
+  .dashboard-container {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    position: fixed;
+    top: 64px;
+    left: 0;
+    height: calc(100vh - 64px);
+    transform: translateX(-100%);
+    z-index: 1000;
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
+  .main-content {
+    padding: 15px;
+  }
+}
