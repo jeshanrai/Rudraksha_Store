@@ -16,7 +16,8 @@ function RegisterPage() {
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setForm({ ...form, [name]: value });
   };
 
   const handleSubmit = async (e) => {
@@ -25,10 +26,19 @@ function RegisterPage() {
     setLoading(true);
 
     try {
+      // Normalize inputs
+      const payload = {
+        username: form.username.trim(),
+        firstName: form.firstName.trim(),
+        lastName: form.lastName.trim(),
+        email: form.email.trim().toLowerCase(),
+        password: form.password.trim(),
+      };
+
       const res = await fetch('http://localhost:5000/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
+        body: JSON.stringify(payload),
       });
 
       const data = await res.json();
@@ -38,7 +48,7 @@ function RegisterPage() {
       }
 
       alert('✅ Registration successful! Please login.');
-      navigate('/login');
+      navigate('/login', { replace: true });
     } catch (err) {
       setError(err.message);
     } finally {
@@ -59,6 +69,7 @@ function RegisterPage() {
               value={form.firstName}
               onChange={handleChange}
               required
+              autoComplete="given-name"
             />
             <input
               type="text"
@@ -67,6 +78,7 @@ function RegisterPage() {
               value={form.lastName}
               onChange={handleChange}
               required
+              autoComplete="family-name"
             />
           </div>
           <input
@@ -76,6 +88,7 @@ function RegisterPage() {
             value={form.username}
             onChange={handleChange}
             required
+            autoComplete="username"
           />
           <input
             type="email"
@@ -84,6 +97,7 @@ function RegisterPage() {
             value={form.email}
             onChange={handleChange}
             required
+            autoComplete="email"
           />
           <input
             type="password"
@@ -92,6 +106,7 @@ function RegisterPage() {
             value={form.password}
             onChange={handleChange}
             required
+            autoComplete="new-password"
           />
           <button type="submit" disabled={loading}>
             {loading ? 'Registering...' : 'Register'}
@@ -102,7 +117,9 @@ function RegisterPage() {
 
         <p className="login-text">
           Already have an account?{' '}
-          <span onClick={() => navigate('/login')}>Login here</span>
+          <span onClick={() => navigate('/login', { replace: true })} style={{ cursor: 'pointer', color: 'blue' }}>
+            Login here
+          </span>
         </p>
       </div>
     </div>

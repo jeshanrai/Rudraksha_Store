@@ -1,41 +1,40 @@
-// components/ProtectedRoute.js
-import React from 'react';
-import { Navigate } from 'react-router-dom';
-import { jwtDecode } from 'jwt-decode';
+// src/components/ProtectedRoute.js
+import React, { useEffect } from 'react';
+import { Navigate, useLocation } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import {jwtDecode} from 'jwt-decode';
 
 const ProtectedRoute = ({ children, requireAdmin = false }) => {
-  const token = localStorage.getItem('token');
+  const { token, user, logout, loading } = useAuth();
+  const location = useLocation();
 
-  // Check if token exists
-  if (!token) {
-    return <Navigate to="/login" replace />;
+  // Validate token only as a side effect to prevent render loop
+  useEffect(() => {
+    if (loading || !token || !user) return;
+
+    try {
+      const decoded = jwtDecode(token);
+      const isExpired = decoded?.exp * 1000 < Date.now();
+      if (isExpired) logout();
+    } catch (err) {
+      logout();
+    }
+  }, [token, user, loading, logout]);
+
+  // Wait until auth loading finishes
+  if (loading) return null;
+
+  // Not logged in
+  if (!token || !user) {
+    return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  try {
-    // Decode token to get user info
-    const decodedToken = jwtDecode(token);
-    
-    // Check if token is expired
-    const currentTime = Date.now() / 1000;
-    if (decodedToken.exp < currentTime) {
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      return <Navigate to="/login" replace />;
-    }
-
-    // Check admin requirement
-    if (requireAdmin && decodedToken.role !== 'admin') {
-      return <Navigate to="/profile" replace />;
-    }
-
-    // Token is valid, render the protected component
-    return children;
-  } catch (error) {
-    console.error('Token decode error:', error);
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    return <Navigate to="/login" replace />;
+  // Admin-only route
+  if (requireAdmin && user.role !== 'admin') {
+    return <Navigate to="/profile" replace />;
   }
+
+  return children;
 };
 
 export default ProtectedRoute;
