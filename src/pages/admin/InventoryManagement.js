@@ -25,6 +25,10 @@ const InventoryManagement = () => {
     category: ''
   });
 
+  // Currency formatter for ₹
+  const formatCurrency = (amount) =>
+    new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(amount);
+
   useEffect(() => {
     fetchProducts();
   }, [currentPage, searchTerm]);
@@ -64,6 +68,16 @@ const InventoryManagement = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+
+    // Validation for negative values
+    if (parseInt(formData.stock, 10) < 0) {
+      setError('Stock cannot be negative');
+      return;
+    }
+    if (parseFloat(formData.price) < 0) {
+      setError('Price cannot be negative');
+      return;
+    }
 
     try {
       const url = editingProduct
@@ -197,55 +211,54 @@ const InventoryManagement = () => {
           <div className="loading">Loading products...</div>
         ) : (
           <table className="inventory-table">
-  <thead>
-    <tr>
-      <th>Image</th>
-      <th>Name</th>
-      <th>Stock</th>
-      <th>Price</th>
-      <th>Mukhi</th>
-      <th>Actions</th>
-    </tr>
-  </thead>
-  <tbody>
-    {products.map(product => (
-      <tr key={product._id}>
-        {/* Product Image */}
-        <td>
-          {product.images[0] ? (
-            <img
-              className="product-thumb"
-              src={product.images[0]}
-              alt={product.name}
-              onError={(e) => { e.target.src = '/api/placeholder/40/40'; }}
-            />
-          ) : (
-            <img className="product-thumb" src="/api/placeholder/40/40" alt="placeholder" />
-          )}
-        </td>
+            <thead>
+              <tr>
+                <th>Image</th>
+                <th>Name</th>
+                <th>Stock</th>
+                <th>Price</th>
+                <th>Mukhi</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {products.map(product => (
+                <tr key={product._id}>
+                  {/* Product Image */}
+                  <td>
+                    {product.images[0] ? (
+                      <img
+                        className="product-thumb"
+                        src={product.images[0]}
+                        alt={product.name}
+                        onError={(e) => { e.target.src = '/api/placeholder/40/40'; }}
+                      />
+                    ) : (
+                      <img className="product-thumb" src="/api/placeholder/40/40" alt="placeholder" />
+                    )}
+                  </td>
 
-        {/* Product Name */}
-        <td>{product.name}</td>
+                  {/* Product Name */}
+                  <td>{product.name}</td>
 
-        {/* Stock */}
-        <td>{product.stock}</td>
+                  {/* Stock */}
+                  <td>{product.stock}</td>
 
-        {/* Price */}
-        <td>Rs{product.price.toFixed(2)}</td>
+                  {/* Price in ₹ */}
+                  <td>{formatCurrency(product.price)}</td>
 
-        {/* Mukhi */}
-        <td>{product.mukhi || 'N/A'}</td>
+                  {/* Mukhi */}
+                  <td>{product.mukhi || 'N/A'}</td>
 
-        {/* Actions */}
-        <td>
-          <button onClick={() => handleEdit(product)}>Edit</button>
-          <button onClick={() => handleDelete(product._id)}>Delete</button>
-        </td>
-      </tr>
-    ))}
-  </tbody>
-</table>
-
+                  {/* Actions */}
+                  <td>
+                    <button onClick={() => handleEdit(product)}>Edit</button>
+                    <button onClick={() => handleDelete(product._id)}>Delete</button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         )}
       </div>
 
@@ -286,8 +299,8 @@ const InventoryManagement = () => {
 
               <textarea placeholder="Description" value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} required />
               <textarea placeholder="Benefits" value={formData.benefits} onChange={(e) => setFormData({ ...formData, benefits: e.target.value })} />
-              <input type="number" placeholder="Price" value={formData.price} onChange={(e) => setFormData({ ...formData, price: e.target.value })} required />
-              <input type="number" placeholder="Stock" value={formData.stock} onChange={(e) => setFormData({ ...formData, stock: e.target.value })} required />
+              <input type="number" placeholder="Price" min="0" step="0.01" value={formData.price} onChange={(e) => setFormData({ ...formData, price: e.target.value })} required />
+              <input type="number" placeholder="Stock" min="0" step="1" value={formData.stock} onChange={(e) => setFormData({ ...formData, stock: e.target.value })} required />
               <input type="text" placeholder="Mukhi" value={formData.mukhi} onChange={(e) => setFormData({ ...formData, mukhi: e.target.value })} />
               <input type="text" placeholder="Category" value={formData.category} onChange={(e) => setFormData({ ...formData, category: e.target.value })} />
 

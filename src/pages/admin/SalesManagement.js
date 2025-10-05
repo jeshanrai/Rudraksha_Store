@@ -107,20 +107,40 @@ const SalesManagement = () => {
 
   const calculateTotal = (productId, quantity) => {
     const product = products.find(p => p._id === productId);
-    if (product && quantity) {
+    if (product && quantity !== '') {
       const total = product.price * parseInt(quantity);
-      setFormData({ ...formData, totalAmount: total.toFixed(2) });
+      setFormData(prev => ({ ...prev, totalAmount: total.toFixed(2) }));
+    } else {
+      setFormData(prev => ({ ...prev, totalAmount: '' }));
     }
   };
 
   const handleProductChange = (productId) => {
-    setFormData({ ...formData, productId, totalAmount: '' });
-    if (formData.quantity) calculateTotal(productId, formData.quantity);
+    setFormData(prev => ({ ...prev, productId, totalAmount: '' }));
+
+    if (formData.quantity !== '') {
+      calculateTotal(productId, formData.quantity);
+    }
   };
 
   const handleQuantityChange = (quantity) => {
-    setFormData({ ...formData, quantity });
-    if (formData.productId) calculateTotal(formData.productId, quantity);
+    // Allow empty string for controlled input
+    let qty = quantity === '' ? '' : parseInt(quantity);
+
+    const selectedProduct = products.find(p => p._id === formData.productId);
+
+    if (selectedProduct && qty > selectedProduct.stock) {
+      setError(`Cannot exceed available stock (${selectedProduct.stock})`);
+      return;
+    } else {
+      setError('');
+    }
+
+    setFormData(prev => ({ ...prev, quantity: qty }));
+
+    if (formData.productId && qty !== '') {
+      calculateTotal(formData.productId, qty);
+    }
   };
 
   const formatDate = (dateString) =>
@@ -133,11 +153,10 @@ const SalesManagement = () => {
     });
 
   const formatCurrency = (amount) =>
-    new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount);
+  new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(amount);
 
   return (
     <div className="sales-main">
-      {error && <div className="error-message">{error}</div>}
 
       <div className="header">
         <h1>Sales Management</h1>
@@ -171,13 +190,13 @@ const SalesManagement = () => {
           type="date"
           value={dateFilter.startDate}
           onChange={(e) => setDateFilter({ ...dateFilter, startDate: e.target.value })}
-        />
+          />
         <label>End Date</label>
         <input
           type="date"
           value={dateFilter.endDate}
           onChange={(e) => setDateFilter({ ...dateFilter, endDate: e.target.value })}
-        />
+          />
         <button onClick={() => setDateFilter({ startDate: '', endDate: '' })}>Clear Filter</button>
       </div>
 
@@ -223,9 +242,9 @@ const SalesManagement = () => {
         <div className="pagination">
           {Array.from({ length: pagination.totalPages }, (_, i) => i + 1).map((page) => (
             <button
-              key={page}
-              className={page === currentPage ? 'active' : ''}
-              onClick={() => setCurrentPage(page)}
+            key={page}
+            className={page === currentPage ? 'active' : ''}
+            onClick={() => setCurrentPage(page)}
             >
               {page}
             </button>
@@ -243,7 +262,7 @@ const SalesManagement = () => {
                 required
                 value={formData.productId}
                 onChange={(e) => handleProductChange(e.target.value)}
-              >
+                >
                 <option value="">Select a product</option>
                 {products.map((product) => (
                   <option key={product._id} value={product._id}>
@@ -259,7 +278,8 @@ const SalesManagement = () => {
                 required
                 value={formData.quantity}
                 onChange={(e) => handleQuantityChange(e.target.value)}
-              />
+                />
+                {error && <div className="error-message">{error}</div>}
 
               <label>Total Amount ($) *</label>
               <input
@@ -269,7 +289,7 @@ const SalesManagement = () => {
                 required
                 value={formData.totalAmount}
                 onChange={(e) => setFormData({ ...formData, totalAmount: e.target.value })}
-              />
+                />
 
               <label>Notes</label>
               <textarea
@@ -277,7 +297,7 @@ const SalesManagement = () => {
                 value={formData.notes}
                 onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
                 placeholder="Optional notes..."
-              />
+                />
 
               <div className="modal-actions">
                 <button type="button" onClick={() => setShowModal(false)}>

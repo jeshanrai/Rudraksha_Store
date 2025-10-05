@@ -6,6 +6,7 @@ const productSchema = new mongoose.Schema({
   description: { type: String },
   images: [{ type: String }],
   stock: { type: Number, default: 0 },
+  mukhi: { type: Number, required: true },
   createdAt: { type: Date, default: Date.now },
 });
 
