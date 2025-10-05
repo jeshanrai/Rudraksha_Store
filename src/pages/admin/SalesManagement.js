@@ -10,7 +10,7 @@ const SalesManagement = () => {
   const [showModal, setShowModal] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [pagination, setPagination] = useState({});
-  const [summary, setSummary] = useState({ totalRevenue: 0, totalSales: 0 });
+  const [summary, setSummary] = useState({ totalRevenue: 0, totalSales: 0, totalProfit: 0 });
   const [dateFilter, setDateFilter] = useState({ startDate: '', endDate: '' });
 
   const { token, logout } = useAuth();
@@ -45,9 +45,25 @@ const SalesManagement = () => {
       }
 
       const data = await response.json();
+
+      // Calculate total profit considering discount rate
+      let totalProfit = 0;
+      data.sales.forEach(sale => {
+        const product = sale.productId;
+        if (product && product.costPrice !== undefined) {
+          const discountedPrice = product.sellingPrice * (1 - (product.discountRate || 0) / 100);
+          const profit = (discountedPrice - product.costPrice) * sale.quantity;
+          totalProfit += profit;
+        }
+      });
+
       setSales(data.sales);
       setPagination(data.pagination);
-      setSummary(data.summary);
+      setSummary({
+        totalRevenue: data.summary.totalRevenue,
+        totalSales: data.summary.totalSales,
+        totalProfit
+      });
     } catch (error) {
       console.error(error);
       setError('Failed to load sales data');
@@ -108,7 +124,8 @@ const SalesManagement = () => {
   const calculateTotal = (productId, quantity) => {
     const product = products.find(p => p._id === productId);
     if (product && quantity !== '') {
-      const total = product.price * parseInt(quantity);
+      const discountedPrice = product.sellingPrice * (1 - (product.discountRate || 0) / 100);
+      const total = discountedPrice * parseInt(quantity);
       setFormData(prev => ({ ...prev, totalAmount: total.toFixed(2) }));
     } else {
       setFormData(prev => ({ ...prev, totalAmount: '' }));
@@ -117,16 +134,13 @@ const SalesManagement = () => {
 
   const handleProductChange = (productId) => {
     setFormData(prev => ({ ...prev, productId, totalAmount: '' }));
-
     if (formData.quantity !== '') {
       calculateTotal(productId, formData.quantity);
     }
   };
 
   const handleQuantityChange = (quantity) => {
-    // Allow empty string for controlled input
     let qty = quantity === '' ? '' : parseInt(quantity);
-
     const selectedProduct = products.find(p => p._id === formData.productId);
 
     if (selectedProduct && qty > selectedProduct.stock) {
@@ -137,7 +151,6 @@ const SalesManagement = () => {
     }
 
     setFormData(prev => ({ ...prev, quantity: qty }));
-
     if (formData.productId && qty !== '') {
       calculateTotal(formData.productId, qty);
     }
@@ -153,11 +166,10 @@ const SalesManagement = () => {
     });
 
   const formatCurrency = (amount) =>
-  new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(amount);
+    new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(amount);
 
   return (
     <div className="sales-main">
-
       <div className="header">
         <h1>Sales Management</h1>
         <button onClick={() => setShowModal(true)} className="btn-add">
@@ -175,11 +187,17 @@ const SalesManagement = () => {
           <h2>{summary.totalSales}</h2>
         </div>
         <div className="card">
-          <p>Avg Sale Value</p>
+          <p>Total Profit / Loss</p>
+          <h2 style={{ color: summary.totalProfit >= 0 ? 'green' : 'red' }}>
+            {formatCurrency(summary.totalProfit)}
+          </h2>
+        </div>
+        <div className="card">
+          <p>Avg Profit per Sale</p>
           <h2>
             {summary.totalSales > 0
-              ? formatCurrency(summary.totalRevenue / summary.totalSales)
-              : '$0.00'}
+              ? formatCurrency(summary.totalProfit / summary.totalSales)
+              : '₹0.00'}
           </h2>
         </div>
       </div>
@@ -190,13 +208,13 @@ const SalesManagement = () => {
           type="date"
           value={dateFilter.startDate}
           onChange={(e) => setDateFilter({ ...dateFilter, startDate: e.target.value })}
-          />
+        />
         <label>End Date</label>
         <input
           type="date"
           value={dateFilter.endDate}
           onChange={(e) => setDateFilter({ ...dateFilter, endDate: e.target.value })}
-          />
+        />
         <button onClick={() => setDateFilter({ startDate: '', endDate: '' })}>Clear Filter</button>
       </div>
 
@@ -211,28 +229,41 @@ const SalesManagement = () => {
                 <th>Product</th>
                 <th>Quantity</th>
                 <th>Amount</th>
+                <th>Profit/Loss</th>
                 <th>Date</th>
                 <th>Status</th>
               </tr>
             </thead>
             <tbody>
-              {sales.map((sale) => (
-                <tr key={sale._id}>
-                  <td>{sale._id.slice(-8).toUpperCase()}</td>
-                  <td>
-                    {sale.productId?.name || 'Deleted'} - $
-                    {sale.productId?.price?.toFixed(2) || 'N/A'}
-                  </td>
-                  <td>{sale.quantity}</td>
-                  <td>{formatCurrency(sale.totalAmount)}</td>
-                  <td>{formatDate(sale.date)}</td>
-                  <td>
-                    <span className={`status ${sale.status || 'completed'}`}>
-                      {sale.status || 'completed'}
-                    </span>
-                  </td>
-                </tr>
-              ))}
+              {sales.map((sale) => {
+                const product = sale.productId;
+                let profit = 0;
+                if (product && product.costPrice !== undefined) {
+                  const discountedPrice = product.sellingPrice * (1 - (product.discountRate || 0) / 100);
+                  profit = (discountedPrice - product.costPrice) * sale.quantity;
+                }
+                return (
+                  <tr key={sale._id}>
+                    <td>{sale._id.slice(-8).toUpperCase()}</td>
+                    <td>
+                      {product?.name || 'Deleted'} - ₹
+                      {product?.sellingPrice?.toFixed(2) || 'N/A'}
+                      {product?.discountRate ? ` (-${product.discountRate}%)` : ''}
+                    </td>
+                    <td>{sale.quantity}</td>
+                    <td>{formatCurrency(sale.totalAmount)}</td>
+                    <td style={{ color: profit >= 0 ? 'green' : 'red' }}>
+                      {formatCurrency(profit)}
+                    </td>
+                    <td>{formatDate(sale.date)}</td>
+                    <td>
+                      <span className={`status ${sale.status || 'completed'}`}>
+                        {sale.status || 'completed'}
+                      </span>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         )}
@@ -242,9 +273,9 @@ const SalesManagement = () => {
         <div className="pagination">
           {Array.from({ length: pagination.totalPages }, (_, i) => i + 1).map((page) => (
             <button
-            key={page}
-            className={page === currentPage ? 'active' : ''}
-            onClick={() => setCurrentPage(page)}
+              key={page}
+              className={page === currentPage ? 'active' : ''}
+              onClick={() => setCurrentPage(page)}
             >
               {page}
             </button>
@@ -262,11 +293,11 @@ const SalesManagement = () => {
                 required
                 value={formData.productId}
                 onChange={(e) => handleProductChange(e.target.value)}
-                >
+              >
                 <option value="">Select a product</option>
                 {products.map((product) => (
                   <option key={product._id} value={product._id}>
-                    {product.name} - ${product.price.toFixed(2)} (Stock: {product.stock})
+                    {product.name} - ₹{product.sellingPrice.toFixed(2)} (Stock: {product.stock}) {product.discountRate ? ` -${product.discountRate}%` : ''}
                   </option>
                 ))}
               </select>
@@ -278,10 +309,10 @@ const SalesManagement = () => {
                 required
                 value={formData.quantity}
                 onChange={(e) => handleQuantityChange(e.target.value)}
-                />
-                {error && <div className="error-message">{error}</div>}
+              />
+              {error && <div className="error-message">{error}</div>}
 
-              <label>Total Amount ($) *</label>
+              <label>Total Amount (₹) *</label>
               <input
                 type="number"
                 step="0.01"
@@ -289,7 +320,7 @@ const SalesManagement = () => {
                 required
                 value={formData.totalAmount}
                 onChange={(e) => setFormData({ ...formData, totalAmount: e.target.value })}
-                />
+              />
 
               <label>Notes</label>
               <textarea
@@ -297,7 +328,7 @@ const SalesManagement = () => {
                 value={formData.notes}
                 onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
                 placeholder="Optional notes..."
-                />
+              />
 
               <div className="modal-actions">
                 <button type="button" onClick={() => setShowModal(false)}>

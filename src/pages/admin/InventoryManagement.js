@@ -19,13 +19,15 @@ const InventoryManagement = () => {
     images: [],
     description: '',
     benefits: '',
+    costPrice: '',
+    sellingPrice: '',
+    discountRate: '',
     price: '',
     stock: '',
     mukhi: '',
     category: ''
   });
 
-  // Currency formatter for ₹
   const formatCurrency = (amount) =>
     new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(amount);
 
@@ -69,13 +71,16 @@ const InventoryManagement = () => {
     e.preventDefault();
     setError('');
 
-    // Validation for negative values
     if (parseInt(formData.stock, 10) < 0) {
       setError('Stock cannot be negative');
       return;
     }
-    if (parseFloat(formData.price) < 0) {
-      setError('Price cannot be negative');
+    if (parseFloat(formData.costPrice) < 0 || parseFloat(formData.sellingPrice) < 0) {
+      setError('Price values cannot be negative');
+      return;
+    }
+    if (parseFloat(formData.discountRate) < 0) {
+      setError('Discount rate cannot be negative');
       return;
     }
 
@@ -86,10 +91,12 @@ const InventoryManagement = () => {
 
       const method = editingProduct ? 'PUT' : 'POST';
 
-      // Send all data as JSON, images already converted to Base64
       const payload = {
         ...formData,
-        price: parseFloat(formData.price),
+        costPrice: parseFloat(formData.costPrice),
+        sellingPrice: parseFloat(formData.sellingPrice),
+        discountRate: parseFloat(formData.discountRate),
+        price: parseFloat(formData.sellingPrice),
         stock: parseInt(formData.stock, 10)
       };
 
@@ -143,7 +150,10 @@ const InventoryManagement = () => {
       images: product.images.length > 0 ? product.images : [],
       description: product.description,
       benefits: product.benefits || '',
-      price: product.price.toString(),
+      costPrice: product.costPrice?.toString() || '',
+      sellingPrice: product.sellingPrice?.toString() || '',
+      discountRate: product.discountRate?.toString() || '',
+      price: product.price?.toString() || '',
       stock: product.stock.toString(),
       mukhi: product.mukhi || '',
       category: product.category || ''
@@ -158,6 +168,9 @@ const InventoryManagement = () => {
       images: [],
       description: '',
       benefits: '',
+      costPrice: '',
+      sellingPrice: '',
+      discountRate: '',
       price: '',
       stock: '',
       mukhi: '',
@@ -171,19 +184,10 @@ const InventoryManagement = () => {
     const reader = new FileReader();
     reader.onloadend = () => {
       const newImages = [...formData.images];
-      newImages[index] = reader.result; // Base64 string
+      newImages[index] = reader.result;
       setFormData({ ...formData, images: newImages });
     };
     reader.readAsDataURL(file);
-  };
-
-  const addImageField = () => {
-    setFormData({ ...formData, images: [...formData.images, ''] });
-  };
-
-  const removeImageField = (index) => {
-    const newImages = formData.images.filter((_, i) => i !== index);
-    setFormData({ ...formData, images: newImages });
   };
 
   return (
@@ -193,7 +197,7 @@ const InventoryManagement = () => {
       <div className="inventory-header">
         <h1>Inventory Management</h1>
         <button onClick={() => { resetForm(); setShowModal(true); }}>
-          {editingProduct ? 'Edit Product' : 'Add Product'}
+          Add Product
         </button>
       </div>
 
@@ -216,7 +220,9 @@ const InventoryManagement = () => {
                 <th>Image</th>
                 <th>Name</th>
                 <th>Stock</th>
-                <th>Price</th>
+                <th>Cost Price</th>
+                <th>Selling Price</th>
+                <th>Discount %</th>
                 <th>Mukhi</th>
                 <th>Actions</th>
               </tr>
@@ -224,33 +230,19 @@ const InventoryManagement = () => {
             <tbody>
               {products.map(product => (
                 <tr key={product._id}>
-                  {/* Product Image */}
                   <td>
                     {product.images[0] ? (
-                      <img
-                        className="product-thumb"
-                        src={product.images[0]}
-                        alt={product.name}
-                        onError={(e) => { e.target.src = '/api/placeholder/40/40'; }}
-                      />
+                      <img className="product-thumb" src={product.images[0]} alt={product.name} />
                     ) : (
                       <img className="product-thumb" src="/api/placeholder/40/40" alt="placeholder" />
                     )}
                   </td>
-
-                  {/* Product Name */}
                   <td>{product.name}</td>
-
-                  {/* Stock */}
                   <td>{product.stock}</td>
-
-                  {/* Price in ₹ */}
-                  <td>{formatCurrency(product.price)}</td>
-
-                  {/* Mukhi */}
+                  <td>{formatCurrency(product.costPrice)}</td>
+                  <td>{formatCurrency(product.sellingPrice)}</td>
+                  <td>{product.discountRate || 0}%</td>
                   <td>{product.mukhi || 'N/A'}</td>
-
-                  {/* Actions */}
                   <td>
                     <button onClick={() => handleEdit(product)}>Edit</button>
                     <button onClick={() => handleDelete(product._id)}>Delete</button>
@@ -281,28 +273,90 @@ const InventoryManagement = () => {
           <div className="modal-content">
             <h3>{editingProduct ? 'Edit Product' : 'Add New Product'}</h3>
             <form onSubmit={handleSubmit}>
-              <input type="text" placeholder="Name" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} required />
+              <input
+                type="text"
+                placeholder="Name"
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                required
+              />
 
+              {/* Image Upload */}
               <div className="image-upload">
-                <label>Upload Images:</label>
-                <input
-                  type="file"
-                  accept="image/*"
-                  multiple
-                  onChange={(e) => {
-                    Array.from(e.target.files).forEach((file, index) =>
-                      handleImageChange(index, file)
-                    );
-                  }}
-                />
-              </div>
+  <label>Upload Images:</label>
+  <input
+    type="file"
+    accept="image/*"
+    multiple
+    onChange={(e) => {
+      Array.from(e.target.files).forEach((file, index) =>
+        handleImageChange(index, file)
+      );
+    }}
+  />
+</div>
 
-              <textarea placeholder="Description" value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} required />
-              <textarea placeholder="Benefits" value={formData.benefits} onChange={(e) => setFormData({ ...formData, benefits: e.target.value })} />
-              <input type="number" placeholder="Price" min="0" step="0.01" value={formData.price} onChange={(e) => setFormData({ ...formData, price: e.target.value })} required />
-              <input type="number" placeholder="Stock" min="0" step="1" value={formData.stock} onChange={(e) => setFormData({ ...formData, stock: e.target.value })} required />
-              <input type="text" placeholder="Mukhi" value={formData.mukhi} onChange={(e) => setFormData({ ...formData, mukhi: e.target.value })} />
-              <input type="text" placeholder="Category" value={formData.category} onChange={(e) => setFormData({ ...formData, category: e.target.value })} />
+
+              <textarea
+                placeholder="Description"
+                value={formData.description}
+                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                required
+              />
+              <textarea
+                placeholder="Benefits"
+                value={formData.benefits}
+                onChange={(e) => setFormData({ ...formData, benefits: e.target.value })}
+              />
+
+              <input
+                type="number"
+                placeholder="Cost Price"
+                min="0"
+                step="0.01"
+                value={formData.costPrice}
+                onChange={(e) => setFormData({ ...formData, costPrice: e.target.value })}
+                required
+              />
+              <input
+                type="number"
+                placeholder="Selling Price"
+                min="0"
+                step="0.01"
+                value={formData.sellingPrice}
+                onChange={(e) => setFormData({ ...formData, sellingPrice: e.target.value })}
+                required
+              />
+              <input
+                type="number"
+                placeholder="Discount Rate (%)"
+                min="0"
+                step="0.01"
+                value={formData.discountRate}
+                onChange={(e) => setFormData({ ...formData, discountRate: e.target.value })}
+              />
+
+              <input
+                type="number"
+                placeholder="Stock"
+                min="0"
+                step="1"
+                value={formData.stock}
+                onChange={(e) => setFormData({ ...formData, stock: e.target.value })}
+                required
+              />
+              <input
+                type="text"
+                placeholder="Mukhi"
+                value={formData.mukhi}
+                onChange={(e) => setFormData({ ...formData, mukhi: e.target.value })}
+              />
+              <input
+                type="text"
+                placeholder="Category"
+                value={formData.category}
+                onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+              />
 
               <div className="modal-actions">
                 <button type="button" onClick={() => setShowModal(false)}>Cancel</button>

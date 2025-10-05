@@ -10,7 +10,9 @@ const adminMiddleware = require('../middleware/adminMiddleware');
 router.use(authMiddleware);
 router.use(adminMiddleware);
 
+// ----------------------------
 // INVENTORY MANAGEMENT ROUTES
+// ----------------------------
 
 // GET /api/admin/products - List all products
 router.get('/products', async (req, res) => {
@@ -53,18 +55,30 @@ router.get('/products', async (req, res) => {
 // POST /api/admin/products - Add new product
 router.post('/products', async (req, res) => {
   try {
-    const { name, images, description, benefits, price, stock, mukhi, category } = req.body;
+    const {
+      name,
+      images,
+      description,
+      benefits,
+      costPrice,
+      sellingPrice,
+      discountRate,
+      price,
+      stock,
+      mukhi,
+      category
+    } = req.body;
 
     // Validation
-    if (!name || !images || !description || !price || stock === undefined) {
-      return res.status(400).json({ 
-        message: 'Required fields: name, images, description, price, stock' 
+    if (!name || !images || !description || sellingPrice === undefined || costPrice === undefined || stock === undefined) {
+      return res.status(400).json({
+        message: 'Required fields: name, images, description, costPrice, sellingPrice, stock'
       });
     }
 
-    if (price < 0 || stock < 0) {
-      return res.status(400).json({ 
-        message: 'Price and stock must be non-negative' 
+    if (costPrice < 0 || sellingPrice < 0 || discountRate < 0 || discountRate > 100 || stock < 0) {
+      return res.status(400).json({
+        message: 'Cost price, selling price, discount (0-100), and stock must be non-negative'
       });
     }
 
@@ -73,7 +87,10 @@ router.post('/products', async (req, res) => {
       images: Array.isArray(images) ? images : [images],
       description,
       benefits,
-      price,
+      costPrice,
+      sellingPrice,
+      discountRate,
+      price: sellingPrice, // keep price field backward-compatible
       stock,
       mukhi,
       category
@@ -93,13 +110,19 @@ router.put('/products/:id', async (req, res) => {
     const { id } = req.params;
     const updates = req.body;
 
-    // Validate price and stock if provided
-    if (updates.price && updates.price < 0) {
-      return res.status(400).json({ message: 'Price must be non-negative' });
+    // Validate non-negative values
+    const nonNegativeFields = ['price', 'stock', 'costPrice', 'sellingPrice', 'discountRate'];
+    for (const field of nonNegativeFields) {
+      if (updates[field] !== undefined && updates[field] < 0) {
+        return res.status(400).json({ message: `${field} must be non-negative` });
+      }
+      if (field === 'discountRate' && updates.discountRate > 100) {
+        return res.status(400).json({ message: 'discountRate cannot exceed 100%' });
+      }
     }
-    if (updates.stock !== undefined && updates.stock < 0) {
-      return res.status(400).json({ message: 'Stock must be non-negative' });
-    }
+
+    // Sync price field if sellingPrice is updated
+    if (updates.sellingPrice !== undefined) updates.price = updates.sellingPrice;
 
     const product = await Product.findByIdAndUpdate(
       id,
@@ -107,9 +130,7 @@ router.put('/products/:id', async (req, res) => {
       { new: true, runValidators: true }
     );
 
-    if (!product) {
-      return res.status(404).json({ message: 'Product not found' });
-    }
+    if (!product) return res.status(404).json({ message: 'Product not found' });
 
     res.json({ message: 'Product updated successfully', product });
   } catch (error) {
@@ -124,10 +145,7 @@ router.delete('/products/:id', async (req, res) => {
     const { id } = req.params;
 
     const product = await Product.findByIdAndDelete(id);
-
-    if (!product) {
-      return res.status(404).json({ message: 'Product not found' });
-    }
+    if (!product) return res.status(404).json({ message: 'Product not found' });
 
     res.json({ message: 'Product deleted successfully' });
   } catch (error) {
@@ -136,7 +154,9 @@ router.delete('/products/:id', async (req, res) => {
   }
 });
 
+// ----------------------------
 // SALES MANAGEMENT ROUTES
+// ----------------------------
 
 // GET /api/admin/sales - List all sales
 router.get('/sales', async (req, res) => {
@@ -153,7 +173,7 @@ router.get('/sales', async (req, res) => {
     }
 
     const sales = await Sales.find(query)
-      .populate('productId', 'name price images')
+      .populate('productId', 'name sellingPrice costPrice discountRate images')
       .populate('userId', 'username email')
       .skip(skip)
       .limit(parseInt(limit))
@@ -161,10 +181,10 @@ router.get('/sales', async (req, res) => {
 
     const total = await Sales.countDocuments(query);
 
-    // Calculate summary stats
-    const totalRevenue = await Sales.aggregate([
+    // Calculate summary stats including profit
+    const summaryAgg = await Sales.aggregate([
       { $match: query },
-      { $group: { _id: null, total: { $sum: '$totalAmount' } } }
+      { $group: { _id: null, totalRevenue: { $sum: '$totalAmount' }, totalProfit: { $sum: '$profit' } } }
     ]);
 
     res.json({
@@ -176,7 +196,8 @@ router.get('/sales', async (req, res) => {
         itemsPerPage: parseInt(limit)
       },
       summary: {
-        totalRevenue: totalRevenue[0]?.total || 0,
+        totalRevenue: summaryAgg[0]?.totalRevenue || 0,
+        totalProfit: summaryAgg[0]?.totalProfit || 0,
         totalSales: total
       }
     });
@@ -191,51 +212,39 @@ router.post('/sales', async (req, res) => {
   try {
     const { productId, quantity, totalAmount, userId, notes } = req.body;
 
-    // Validation
     if (!productId || !quantity || !totalAmount) {
-      return res.status(400).json({ 
-        message: 'Required fields: productId, quantity, totalAmount' 
-      });
+      return res.status(400).json({ message: 'Required fields: productId, quantity, totalAmount' });
     }
 
     if (quantity <= 0 || totalAmount <= 0) {
-      return res.status(400).json({ 
-        message: 'Quantity and total amount must be positive' 
-      });
+      return res.status(400).json({ message: 'Quantity and total amount must be positive' });
     }
 
-    // Verify product exists and has enough stock
     const product = await Product.findById(productId);
-    if (!product) {
-      return res.status(404).json({ message: 'Product not found' });
-    }
+    if (!product) return res.status(404).json({ message: 'Product not found' });
+    if (product.stock < quantity) return res.status(400).json({ message: `Insufficient stock. Available: ${product.stock}` });
 
-    if (product.stock < quantity) {
-      return res.status(400).json({ 
-        message: `Insufficient stock. Available: ${product.stock}` 
-      });
-    }
+    // Effective selling price after discount
+    const effectivePrice = product.sellingPrice * (1 - (product.discountRate || 0) / 100);
+    const profit = (effectivePrice - product.costPrice) * quantity;
 
-    // Create sales entry
     const sales = new Sales({
       productId,
       quantity,
       totalAmount,
+      profit,
       userId,
       notes
     });
 
     await sales.save();
 
-    // Update product stock
+    // Reduce product stock
     product.stock -= quantity;
     await product.save();
 
-    // Populate the sales entry before sending response
-    await sales.populate('productId', 'name price images');
-    if (userId) {
-      await sales.populate('userId', 'username email');
-    }
+    await sales.populate('productId', 'name sellingPrice costPrice discountRate images');
+    if (userId) await sales.populate('userId', 'username email');
 
     res.status(201).json({ message: 'Sales entry created successfully', sales });
   } catch (error) {
@@ -249,30 +258,29 @@ router.get('/dashboard/stats', async (req, res) => {
   try {
     const today = new Date();
     const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-    
-    // Total products
+
     const totalProducts = await Product.countDocuments();
-    
-    // Low stock products (stock <= 5)
     const lowStockProducts = await Product.countDocuments({ stock: { $lte: 5 } });
-    
+
     // Monthly sales
-    const monthlySales = await Sales.aggregate([
+    const monthlySalesAgg = await Sales.aggregate([
       { $match: { date: { $gte: startOfMonth } } },
-      { $group: { _id: null, total: { $sum: '$totalAmount' }, count: { $sum: 1 } } }
+      { $group: { _id: null, totalRevenue: { $sum: '$totalAmount' }, totalProfit: { $sum: '$profit' }, count: { $sum: 1 } } }
     ]);
 
-    // Total revenue
-    const totalRevenue = await Sales.aggregate([
-      { $group: { _id: null, total: { $sum: '$totalAmount' } } }
+    // Total revenue & profit
+    const totalAgg = await Sales.aggregate([
+      { $group: { _id: null, totalRevenue: { $sum: '$totalAmount' }, totalProfit: { $sum: '$profit' } } }
     ]);
 
     res.json({
       totalProducts,
       lowStockProducts,
-      monthlySales: monthlySales[0]?.count || 0,
-      monthlyRevenue: monthlySales[0]?.total || 0,
-      totalRevenue: totalRevenue[0]?.total || 0
+      monthlySales: monthlySalesAgg[0]?.count || 0,
+      monthlyRevenue: monthlySalesAgg[0]?.totalRevenue || 0,
+      monthlyProfit: monthlySalesAgg[0]?.totalProfit || 0,
+      totalRevenue: totalAgg[0]?.totalRevenue || 0,
+      totalProfit: totalAgg[0]?.totalProfit || 0
     });
   } catch (error) {
     console.error('Error fetching dashboard stats:', error);
