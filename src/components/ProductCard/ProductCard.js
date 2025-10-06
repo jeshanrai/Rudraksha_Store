@@ -5,39 +5,46 @@ import { useApp } from '../../context/AppContext';
 import './ProductCard.css';
 
 const ProductCard = ({ product, viewMode = 'grid' }) => {
-  const { addToCart } = useApp();
+  const { addToCart, wishlist, addToWishlist, removeFromWishlist } = useApp();
   const navigate = useNavigate();
 
-  // ✅ Handle image (supports base64, data:image, or URL)
+  // ✅ Handle image (array, base64, or URL)
   const getImageSrc = () => {
-    if (!product.image) return '/placeholder.jpg';
+    if (!product.images || product.images.length === 0) return '/placeholder.jpg';
+    const image = product.images[0];
 
-    // Already a complete data URL
-    if (product.image.startsWith('data:image')) {
-      return product.image;
-    }
-
-    // Raw base64 without prefix
-    if (/^[A-Za-z0-9+/=]+$/.test(product.image.trim())) {
-      return `data:image/jpeg;base64,${product.image}`;
-    }
-
-    // If it's a hosted image
-    if (product.image.startsWith('http')) return product.image;
+    if (image.startsWith('data:image')) return image;
+    if (/^[A-Za-z0-9+/=]+$/.test(image.trim())) return `data:image/jpeg;base64,${image}`;
+    if (image.startsWith('http')) return image;
 
     return '/placeholder.jpg';
   };
 
-  const handleViewDetails = () => {
-    navigate(`/product/${product._id}`, { state: { product } });
+  // ✅ Base values
+  const originalPrice = product.sellingPrice || product.price || 0;
+  const discountRate = product.discountRate || 0;
+
+  // ✅ Calculate discounted price
+  const discountedPrice =
+    discountRate > 0 ? Math.round(originalPrice - (originalPrice * discountRate) / 100) : originalPrice;
+
+  // ✅ Discount display
+  const getDiscount = () => discountRate;
+
+  // ✅ Wishlist handler
+  const isInWishlist = wishlist?.some((item) => item._id === product._id);
+
+  const handleWishlistToggle = (e) => {
+    e.stopPropagation();
+    if (isInWishlist) {
+      removeFromWishlist(product._id);
+    } else {
+      addToWishlist(product);
+    }
   };
 
-  // ✅ Calculate discount percentage
-  const getDiscount = () => {
-    if (product.originalPrice && product.originalPrice > product.price) {
-      return Math.round((1 - product.price / product.originalPrice) * 100);
-    }
-    return 0;
+  const handleViewDetails = () => {
+    navigate(`/product/${product._id}`, { state: { product } });
   };
 
   return (
@@ -62,11 +69,11 @@ const ProductCard = ({ product, viewMode = 'grid' }) => {
 
         {/* Wishlist Button */}
         <button
-          className="wishlist-btn"
-          onClick={(e) => e.stopPropagation()}
+          className={`wishlist-btn ${isInWishlist ? 'active' : ''}`}
+          onClick={handleWishlistToggle}
           aria-label="Add to wishlist"
         >
-          <Heart className="wishlist-icon" />
+          <Heart className="wishlist-icon" fill={isInWishlist ? 'red' : 'none'} />
         </button>
       </div>
 
@@ -95,10 +102,10 @@ const ProductCard = ({ product, viewMode = 'grid' }) => {
         {/* Price + Actions */}
         <div className="product-footer">
           <div className="price-container">
-            <span className="price">₹{product.price}</span>
-            {product.originalPrice > product.price && (
+            <span className="price">₹{discountedPrice}</span>
+            {discountRate > 0 && (
               <>
-                <span className="original-price">₹{product.originalPrice}</span>
+                <span className="original-price">₹{originalPrice}</span>
                 <span className="discount-text">({getDiscount()}% OFF)</span>
               </>
             )}
@@ -118,16 +125,19 @@ const ProductCard = ({ product, viewMode = 'grid' }) => {
               onClick={() => addToCart(product)}
               className="add-to-cart-btn"
               aria-label="Add to cart"
+              disabled={product.stock === 0}
             >
-              Add to Cart
+              {product.stock === 0 ? 'Out of Stock' : 'Add to Cart'}
             </button>
           </div>
         </div>
 
-        {/* Low Stock Warning */}
-        {product.stock < 10 && (
+        {/* Stock Info */}
+        {product.stock === 0 ? (
+          <p className="out-of-stock">Out of Stock</p>
+        ) : product.stock < 10 ? (
           <p className="low-stock">Only {product.stock} left in stock!</p>
-        )}
+        ) : null}
       </div>
     </div>
   );

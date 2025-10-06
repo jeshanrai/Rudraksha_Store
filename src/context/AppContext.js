@@ -1,5 +1,5 @@
 // src/context/AppContext.js
-import React, { createContext, useContext, useReducer, useEffect } from 'react';
+import React, { createContext, useContext, useReducer, useEffect, useState } from 'react';
 import { useCart } from '../hooks/useCart';
 import { mockProducts } from '../data/mockData';
 
@@ -39,8 +39,8 @@ function appReducer(state, action) {
     case 'SET_PRODUCTS':
       return { ...state, products: action.payload };
     case 'RESET_FILTERS':
-      return { 
-        ...state, 
+      return {
+        ...state,
         filters: {
           mukhi: [],
           priceRange: [0, 5000],
@@ -56,13 +56,39 @@ export function AppProvider({ children }) {
   const [state, dispatch] = useReducer(appReducer, initialState);
   const cart = useCart();
 
-  // Simulate loading products
+  // ✅ Wishlist state
+  const [wishlist, setWishlist] = useState(
+    JSON.parse(localStorage.getItem('wishlist')) || []
+  );
+
+  // ✅ Persist wishlist in localStorage
+  useEffect(() => {
+    localStorage.setItem('wishlist', JSON.stringify(wishlist));
+  }, [wishlist]);
+
+  // ✅ Wishlist functions
+  const addToWishlist = (product) => {
+    setWishlist((prev) => {
+      if (prev.some((item) => item._id === product._id)) return prev; // Avoid duplicates
+      return [...prev, product];
+    });
+  };
+
+  const removeFromWishlist = (id) => {
+    setWishlist((prev) => prev.filter((item) => item._id !== id));
+  };
+
+  const clearWishlist = () => {
+    setWishlist([]);
+  };
+
+  // ✅ Load products (mock or API)
   useEffect(() => {
     const loadProducts = async () => {
       dispatch({ type: 'SET_LOADING', payload: true });
       try {
         // Simulate API call
-        await new Promise(resolve => setTimeout(resolve, 500));
+        await new Promise((resolve) => setTimeout(resolve, 500));
         dispatch({ type: 'SET_PRODUCTS', payload: mockProducts });
       } catch (error) {
         console.error('Failed to load products:', error);
@@ -74,15 +100,24 @@ export function AppProvider({ children }) {
     loadProducts();
   }, []);
 
+  // ✅ Context value
   const value = {
     ...state,
     ...cart,
+
+    // User & filters
     setUser: (user) => dispatch({ type: 'SET_USER', payload: user }),
     setSearchTerm: (term) => dispatch({ type: 'SET_SEARCH_TERM', payload: term }),
     setFilters: (filters) => dispatch({ type: 'SET_FILTERS', payload: filters }),
     setSortBy: (sortBy) => dispatch({ type: 'SET_SORT_BY', payload: sortBy }),
     setViewMode: (viewMode) => dispatch({ type: 'SET_VIEW_MODE', payload: viewMode }),
-    resetFilters: () => dispatch({ type: 'RESET_FILTERS' })
+    resetFilters: () => dispatch({ type: 'RESET_FILTERS' }),
+
+    // Wishlist management
+    wishlist,
+    addToWishlist,
+    removeFromWishlist,
+    clearWishlist
   };
 
   return (

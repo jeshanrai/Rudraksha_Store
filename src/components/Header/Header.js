@@ -74,9 +74,9 @@ const Header = () => {
             />
             <Search className="search-icon" />
           </div>
-          <button className="icon-btn" aria-label="Wishlist">
-            <Heart className="h-6 w-6" />
-          </button>
+          <Link to="/wishlist" className="icon-btn" aria-label="Wishlist">
+  <Heart className="h-6 w-6" />
+</Link>
           <Link to="/cart" className="icon-btn cart-btn" aria-label="Shopping cart">
             <ShoppingCart className="h-6 w-6" />
             {cartItemsCount > 0 && (
