@@ -1,97 +1,160 @@
 // src/pages/ProductsPage.js
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Filter, Grid, List } from 'lucide-react';
 import ProductCard from '../components/ProductCard/ProductCard';
 import LoadingSpinner from '../components/common/LoadingSpinner';
-import { useApp } from '../context/AppContext';
 
 const ProductsPage = () => {
-  const [showFilters, setShowFilters] = useState(false);
-  const { 
-    products, 
-    isLoading, 
-    searchTerm, 
-    filters, 
-    setFilters, 
-    sortBy, 
-    setSortBy, 
-    viewMode, 
-    setViewMode,
-    resetFilters 
-  } = useApp();
+  const [products, setProducts] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
+  // UI States
+  const [showFilters, setShowFilters] = useState(false);
+  const [viewMode, setViewMode] = useState('grid');
+
+  // Filters & Sorting
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filters, setFilters] = useState({ mukhi: [] });
+  const [sortBy, setSortBy] = useState('featured');
+
+  // ================== FETCH PRODUCTS ==================
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
+
+        const res = await fetch('http://localhost:5000/api/products');
+        if (!res.ok) throw new Error('Failed to fetch products');
+        const data = await res.json();
+
+        // ✅ Normalize product fields (important for ProductCard)
+        const normalized = data.map((p) => ({
+          ...p,
+          price: p.sellingPrice || p.price || 0,
+          originalPrice: p.originalPrice || p.mrp || p.sellingPrice || 0,
+          image: p.image || '',
+          stock: p.stock ?? 10,
+          rating: p.rating ?? 0,
+          reviews: p.reviews ?? 0,
+        }));
+
+        setProducts(normalized);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
+
+  // ================== FILTERING & SORTING ==================
   const filteredProducts = useMemo(() => {
     if (isLoading) return [];
-    
-    return products.filter(product => {
-      if (searchTerm && !product.name.toLowerCase().includes(searchTerm.toLowerCase())) {
-        return false;
-      }
-      if (filters.mukhi.length && !filters.mukhi.includes(product.mukhi)) {
-        return false;
-      }
-      if (product.price < filters.priceRange[0] || product.price > filters.priceRange[1]) {
-        return false;
-      }
-      return true;
-    }).sort((a, b) => {
-      switch (sortBy) {
-        case 'price-low':
-          return a.price - b.price;
-        case 'price-high':
-          return b.price - a.price;
-        case 'rating':
-          return b.rating - a.rating;
-        case 'newest':
-          return b.id - a.id;
-        default: // 'featured'
-          return a.featured === b.featured ? 0 : a.featured ? -1 : 1;
-      }
-    });
+
+    let filtered = [...products];
+
+    // 🔍 Search filter
+    if (searchTerm.trim()) {
+      filtered = filtered.filter((p) =>
+        p.name.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    // 🔢 Mukhi filter
+    if (filters.mukhi.length > 0) {
+      filtered = filtered.filter((p) => filters.mukhi.includes(p.mukhi));
+    }
+
+    // 🔄 Sorting logic
+    switch (sortBy) {
+      case 'price-low':
+        filtered.sort((a, b) => a.price - b.price);
+        break;
+      case 'price-high':
+        filtered.sort((a, b) => b.price - a.price);
+        break;
+      case 'newest':
+        filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        break;
+      default:
+        break;
+    }
+
+    return filtered;
   }, [products, isLoading, searchTerm, filters, sortBy]);
 
-  if (isLoading) {
-    return <LoadingSpinner />;
-  }
+  const resetFilters = () => {
+    setFilters({ mukhi: [] });
+    setSearchTerm('');
+    setSortBy('featured');
+  };
 
+  // ================== LOADING & ERROR STATES ==================
+  if (isLoading) return <LoadingSpinner />;
+  if (error)
+    return (
+      <div className="error-message">
+        <h3>Failed to load products</h3>
+        <p>{error}</p>
+      </div>
+    );
+
+  // ================== MAIN RETURN ==================
   return (
     <div className="products-page">
       <div className="container">
+        {/* ================== HEADER ================== */}
         <div className="products-header">
           <h1 className="page-title">Our Collection</h1>
+
           <div className="products-controls">
+            {/* 🔍 Search Box */}
+            <input
+              type="text"
+              placeholder="Search products..."
+              className="search-input"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+
+            {/* 🔄 View Toggle */}
             <div className="view-toggle">
               <button
                 onClick={() => setViewMode('grid')}
-                className={`view-btn ${viewMode === 'grid' ? 'view-btn-active' : ''}`}
-                aria-label="Grid view"
+                className={`view-btn ${viewMode === 'grid' ? 'active' : ''}`}
+                title="Grid View"
               >
                 <Grid className="view-icon" />
               </button>
               <button
                 onClick={() => setViewMode('list')}
-                className={`view-btn ${viewMode === 'list' ? 'view-btn-active' : ''}`}
-                aria-label="List view"
+                className={`view-btn ${viewMode === 'list' ? 'active' : ''}`}
+                title="List View"
               >
                 <List className="view-icon" />
               </button>
             </div>
-            <select 
-              value={sortBy} 
+
+            {/* 🔽 Sort Dropdown */}
+            <select
+              value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
               className="sort-select"
-              aria-label="Sort by"
             >
               <option value="featured">Featured</option>
               <option value="price-low">Price: Low to High</option>
               <option value="price-high">Price: High to Low</option>
-              <option value="rating">Highest Rated</option>
               <option value="newest">Newest</option>
             </select>
+
+            {/* ⚙️ Filters Button */}
             <button
-              onClick={() => setShowFilters(!showFilters)}
+              onClick={() => setShowFilters((prev) => !prev)}
               className="filter-btn"
-              aria-label="Filters"
             >
               <Filter className="filter-icon" />
               <span>Filters</span>
@@ -99,79 +162,73 @@ const ProductsPage = () => {
           </div>
         </div>
 
+        {/* ================== FILTERS + PRODUCTS ================== */}
         <div className="products-content">
-          {/* Filters Sidebar */}
-          <div className={`filters-sidebar ${showFilters ? 'filters-sidebar-open' : ''}`}>
+          {/* FILTER SIDEBAR */}
+          <aside
+            className={`filters-sidebar ${
+              showFilters ? 'filters-sidebar-open' : ''
+            }`}
+          >
             <h3 className="filters-title">Filters</h3>
-            
+
+            {/* Mukhi Filter */}
             <div className="filter-group">
               <h4 className="filter-label">Mukhi Type</h4>
               <div className="filter-options">
-                {[1, 5, 6, 7, 11, 14].map(mukhi => (
+                {[1, 5, 6, 7, 11, 14].map((mukhi) => (
                   <label key={mukhi} className="filter-option">
-                    <input 
-                      type="checkbox" 
-                      className="filter-checkbox"
+                    <input
+                      type="checkbox"
                       checked={filters.mukhi.includes(mukhi)}
                       onChange={(e) => {
-                        if (e.target.checked) {
-                          setFilters({ ...filters, mukhi: [...filters.mukhi, mukhi] });
-                        } else {
-                          setFilters({ ...filters, mukhi: filters.mukhi.filter(m => m !== mukhi) });
-                        }
+                        setFilters((prev) => ({
+                          ...prev,
+                          mukhi: e.target.checked
+                            ? [...prev.mukhi, mukhi]
+                            : prev.mukhi.filter((m) => m !== mukhi),
+                        }));
                       }}
                     />
-                    {mukhi} Mukhi ({products.filter(p => p.mukhi === mukhi).length})
+                    {mukhi} Mukhi (
+                    {products.filter((p) => p.mukhi === mukhi).length})
                   </label>
                 ))}
               </div>
             </div>
 
-            <div className="filter-group">
-              <h4 className="filter-label">Price Range</h4>
-              <div className="price-filter">
-                <input 
-                  type="range" 
-                  min="0" 
-                  max="5000" 
-                  value={filters.priceRange[1]}
-                  onChange={(e) => setFilters({ ...filters, priceRange: [0, parseInt(e.target.value)] })}
-                  className="price-slider"
-                />
-                <div className="price-labels">
-                  <span>₹0</span>
-                  <span>₹{filters.priceRange[1]}</span>
-                </div>
-              </div>
-            </div>
-
-            <button 
-              onClick={resetFilters}
-              className="clear-filters-btn"
-            >
+            <button onClick={resetFilters} className="clear-filters-btn">
               Clear All Filters
             </button>
-          </div>
+          </aside>
 
-          {/* Products Grid */}
-          <div className="products-grid-container">
-            <p className="products-count">{filteredProducts.length} products found</p>
-            <div className={`products-grid ${viewMode === 'grid' ? 'grid-view' : 'list-view'}`}>
-              {filteredProducts.map(product => (
-                <ProductCard 
-                  key={product.id} 
-                  product={product} 
-                  viewMode={viewMode}
-                />
-              ))}
-            </div>
-            {filteredProducts.length === 0 && (
+          {/* PRODUCTS SECTION */}
+          <section className="products-grid-container">
+            <p className="products-count">
+              {filteredProducts.length} products found
+            </p>
+
+            {filteredProducts.length === 0 ? (
               <div className="no-products">
                 <h3>No products found</h3>
                 <p>Try adjusting your filters or search term</p>
               </div>
+            ) : (
+              <div
+                className={`products-grid ${
+                  viewMode === 'grid' ? 'grid-view' : 'list-view'
+                }`}
+              >
+                {filteredProducts.map((product) => (
+                  <ProductCard
+                    key={product._id}
+                    product={product}
+                    viewMode={viewMode}
+                  />
+                ))}
+              </div>
             )}
-          </div>
+          </section>
         </div>
       </div>
     </div>

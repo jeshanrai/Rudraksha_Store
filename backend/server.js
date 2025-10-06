@@ -37,6 +37,7 @@ app.use('/api/admin', adminRoutes);
 app.get('/api/health', (req, res) => {
   res.json({ message: 'Server is running', timestamp: new Date().toISOString() });
 });
+app.use('/api/products', require('./routes/productRoutes'));
 
 // Error handling middleware
 app.use((err, req, res, next) => {
