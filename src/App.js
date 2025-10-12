@@ -7,6 +7,7 @@ import Header from './components/Header/Header';
 import Footer from './components/Footer/Footer';
 import LoadingSpinner from './components/common/LoadingSpinner';
 import About from './pages/About';
+import WishlistPage from './pages/WishlistPage';
 import './styles.css';
 
 // Lazy load user pages
@@ -57,6 +58,7 @@ function App() {
                 <Route path="/register" element={<RegisterPage />} />
                 <Route path="/products" element={<ProductsPage />} />
                 <Route path="/product/:id" element={<ProductDetailPage />} />
+                <Route path="/wishlist" element={<WishlistPage />} />
 
                 {/* Protected User Routes */}
                 <Route

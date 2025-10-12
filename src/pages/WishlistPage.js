@@ -1,82 +1,118 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Eye, Trash } from 'lucide-react';
 import { useApp } from '../context/AppContext';
-import { useCart } from '../hooks/useCart';
+import Notification from '../components/Notification';
 import './WishlistPage.css';
 
 const WishlistPage = () => {
-  const { wishlist, removeFromWishlist, clearWishlist } = useApp();
-  const { addToCart } = useCart();
+  const { wishlist, removeFromWishlist, clearWishlist, addToCart } = useApp();
+  const [notification, setNotification] = useState(null);
 
   const handleMoveToCart = (product) => {
-    addToCart(product);
-    removeFromWishlist(product._id);
+    addToCart(product, 1); // add to cart
+    removeFromWishlist(product._id); // remove from wishlist
+
+    // Show notification
+    setNotification({
+      message: `${product.name} added to cart!`,
+      type: 'success'
+    });
   };
+
+  const handleCloseNotification = () => setNotification(null);
 
   if (wishlist.length === 0) {
     return (
       <div className="wishlist-empty">
-        <h2>Your wishlist is empty!</h2>
-        <Link to="/products" className="btn">
+        <h2>💔 Your Wishlist is Empty</h2>
+        <p>Browse our products and save your favorites for later.</p>
+        <Link to="/products" className="browse-btn">
           Browse Products
         </Link>
+
+        {notification && (
+          <Notification
+            message={notification.message}
+            type={notification.type}
+            onClose={handleCloseNotification}
+          />
+        )}
       </div>
     );
   }
 
   return (
     <div className="wishlist-page">
-      <h2 className="wishlist-title">My Wishlist</h2>
-
-      <button className="clear-wishlist-btn" onClick={clearWishlist}>
-        Clear Wishlist
-      </button>
+      <div className="wishlist-header">
+        <h2 className="wishlist-title">My Wishlist ❤️</h2>
+        <button className="clear-wishlist-btn" onClick={clearWishlist}>
+          Clear Wishlist
+        </button>
+      </div>
 
       <div className="wishlist-grid">
         {wishlist.map((product) => (
           <div key={product._id} className="wishlist-card">
-            <img
-              src={product.images?.[0] || '/placeholder.jpg'}
-              alt={product.name}
-              className="wishlist-image"
-            />
+            <div className="wishlist-image-wrapper">
+              <img
+                src={product.images?.[0] || '/placeholder.jpg'}
+                alt={product.name}
+                className="wishlist-image"
+                loading="lazy"
+              />
+            </div>
 
             <div className="wishlist-info">
-              <h3>{product.name}</h3>
-              <p>Price: ₹{product.sellingPrice}</p>
-              {product.discountRate > 0 && (
-                <p>Discount: {product.discountRate}% OFF</p>
-              )}
+              <h3 className="wishlist-product-name">{product.name}</h3>
+              <p className="wishlist-price">
+                ₹{product.sellingPrice}
+                {product.discountRate > 0 && (
+                  <span className="wishlist-discount">
+                    &nbsp;({product.discountRate}% OFF)
+                  </span>
+                )}
+              </p>
 
               <div className="wishlist-actions">
                 <Link
                   to={`/product/${product._id}`}
                   state={{ product }}
-                  className="view-btn"
+                  className="wishlist-btn view-btn"
                   aria-label="View Product"
                 >
-                  <Eye className="h-5 w-5" />
+                  <Eye className="icon" />
+                  View
                 </Link>
 
                 <button
-                  className="move-to-cart-btn"
+                  className="wishlist-btn move-to-cart-btn"
                   onClick={() => handleMoveToCart(product)}
                 >
-                  Move to Cart
+                  🛒 Move to Cart
                 </button>
 
                 <button
-                  className="remove-btn"
+                  className="wishlist-btn remove-btn"
                   onClick={() => removeFromWishlist(product._id)}
                 >
-                  <Trash className="h-5 w-5" />
+                  <Trash className="icon" />
+                  Remove
                 </button>
               </div>
             </div>
           </div>
         ))}
       </div>
+
+      {/* Notification */}
+      {notification && (
+        <Notification
+          message={notification.message}
+          type={notification.type}
+          onClose={handleCloseNotification}
+        />
+      )}
     </div>
   );
 };

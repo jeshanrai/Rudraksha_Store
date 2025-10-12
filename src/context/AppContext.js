@@ -54,19 +54,21 @@ function appReducer(state, action) {
 
 export function AppProvider({ children }) {
   const [state, dispatch] = useReducer(appReducer, initialState);
-  const cart = useCart();
+  
+  // ✅ Use cart hook
+  const cartHook = useCart();
 
   // ✅ Wishlist state
   const [wishlist, setWishlist] = useState(
     JSON.parse(localStorage.getItem('wishlist')) || []
   );
 
-  // ✅ Persist wishlist in localStorage
+  // Persist wishlist in localStorage
   useEffect(() => {
     localStorage.setItem('wishlist', JSON.stringify(wishlist));
   }, [wishlist]);
 
-  // ✅ Wishlist functions
+  // Wishlist functions
   const addToWishlist = (product) => {
     setWishlist((prev) => {
       if (prev.some((item) => item._id === product._id)) return prev; // Avoid duplicates
@@ -82,12 +84,11 @@ export function AppProvider({ children }) {
     setWishlist([]);
   };
 
-  // ✅ Load products (mock or API)
+  // Load products (mock or API)
   useEffect(() => {
     const loadProducts = async () => {
       dispatch({ type: 'SET_LOADING', payload: true });
       try {
-        // Simulate API call
         await new Promise((resolve) => setTimeout(resolve, 500));
         dispatch({ type: 'SET_PRODUCTS', payload: mockProducts });
       } catch (error) {
@@ -100,10 +101,10 @@ export function AppProvider({ children }) {
     loadProducts();
   }, []);
 
-  // ✅ Context value
+  // ✅ Context value including cart
   const value = {
     ...state,
-    ...cart,
+    ...cartHook, // include cart state and methods
 
     // User & filters
     setUser: (user) => dispatch({ type: 'SET_USER', payload: user }),

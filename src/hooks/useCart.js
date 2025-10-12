@@ -1,20 +1,38 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export const useCart = () => {
-  const [cart, setCart] = useState([]);
+  const [cart, setCart] = useState(() => {
+    // Load cart from localStorage on init
+    try {
+      const storedCart = localStorage.getItem('cart');
+      return storedCart ? JSON.parse(storedCart) : [];
+    } catch (err) {
+      return [];
+    }
+  });
 
-  const addToCart = (product, quantity = 1) => {
+  // Persist cart in localStorage
+  useEffect(() => {
+    localStorage.setItem('cart', JSON.stringify(cart));
+  }, [cart]);
+
+  const addToCart = (product, quantity = 1, callback) => {
     setCart(prev => {
-      const existing = prev.find(item => item.id === product.id);
+      const id = product._id || product.id;
+      const existing = prev.find(item => (item._id || item.id) === id);
+
       if (existing) {
         return prev.map(item =>
-          item.id === product.id
+          (item._id || item.id) === id
             ? { ...item, quantity: item.quantity + quantity }
             : item
         );
       }
+
       return [...prev, { ...product, quantity }];
     });
+
+    if (callback) callback();
   };
 
   const updateCartQuantity = (id, quantity) => {
@@ -24,25 +42,33 @@ export const useCart = () => {
     }
     setCart(prev =>
       prev.map(item =>
-        item.id === id ? { ...item, quantity } : item
+        (item._id || item.id) === id ? { ...item, quantity } : item
       )
     );
   };
 
   const removeFromCart = (id) => {
-    setCart(prev => prev.filter(item => item.id !== id));
+    setCart(prev => prev.filter(item => (item._id || item.id) !== id));
   };
 
   const getCartTotal = () => {
-    return cart.reduce((total, item) => total + (item.price * item.quantity), 0);
+    return cart.reduce((total, item) => total + ((item.sellingPrice || item.price || 0) * item.quantity), 0);
   };
+
+  const getCartItemCount = () => {
+    return cart.reduce((count, item) => count + item.quantity, 0);
+  };
+
+  const clearCart = () => setCart([]);
 
   return {
     cart,
-    setCart,             // ✅ Added setCart here
+    setCart,
     addToCart,
     updateCartQuantity,
     removeFromCart,
-    getCartTotal
+    clearCart,
+    getCartTotal,
+    getCartItemCount
   };
 };
