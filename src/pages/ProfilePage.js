@@ -25,9 +25,8 @@ const ProfilePage = () => {
               <p className="profile-email">{user.email}</p>
             </div>
             <div className="profile-menu">
-              <button className="menu-item">Profile Settings</button>
+              <button className="menu-item">Profile</button>
               <button className="menu-item">Order History</button>
-              <button className="menu-item">Wishlist</button>
               <button onClick={logout} className="menu-item logout-btn">Logout</button>
             </div>
           </div>

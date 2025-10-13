@@ -26,6 +26,7 @@ const AdminLayout = lazy(() => import('./layouts/AdminLayout'));
 const AdminDashboardPage = lazy(() => import('./pages/admin/AdminDashboardPage'));
 const InventoryManagement = lazy(() => import('./pages/admin/InventoryManagement'));
 const SalesManagement = lazy(() => import('./pages/admin/SalesManagement'));
+const OrderManagement = lazy(() => import('./pages/admin/OrderManagement'));
 
 // Wrapper to conditionally show Header
 const LayoutWrapper = ({ children }) => {
@@ -98,6 +99,7 @@ function App() {
                   <Route path="dashboard" element={<AdminDashboardPage />} />
                   <Route path="inventory" element={<InventoryManagement />} />
                   <Route path="sales" element={<SalesManagement />} />
+                  <Route path='order' element={<OrderManagement/>}/>
                   <Route index element={<Navigate to="dashboard" replace />} />
                 </Route>
 
