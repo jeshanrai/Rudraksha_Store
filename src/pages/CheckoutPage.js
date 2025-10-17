@@ -18,14 +18,13 @@ const CheckoutPage = () => {
   });
 
   const { cart, getCartTotal, setCart } = useApp();
-  const { user, token } = useAuth(); // auth token for protected API
+  const { user, token } = useAuth();
   const navigate = useNavigate();
 
   const total = getCartTotal();
   const tax = Math.round(total * 0.18);
   const finalTotal = Math.round(total * 1.18);
 
-  // Redirect if cart empty
   useEffect(() => {
     if (cart.length === 0) navigate('/cart');
   }, [cart, navigate]);
@@ -33,15 +32,32 @@ const CheckoutPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Build order payload
+    if (!cart || cart.length === 0) {
+      alert("Your cart is empty. Add items before checkout.");
+      return;
+    }
+
+    const userId =
+      user?.id ||
+      JSON.parse(localStorage.getItem('user'))?._id ||
+      JSON.parse(localStorage.getItem('adminUser'))?._id;
+
+    if (!userId) {
+      alert("User not found. Please login before placing an order.");
+      return;
+    }
+
+    // ✅ FIX: Properly map cart items to avoid empty items array
+    const itemsArray = cart.map(item => ({
+      productId: item._id || item.id,
+      name: item.name,
+      quantity: item.quantity,
+      price: item.sellingPrice || item.price,
+    }));
+
     const orderPayload = {
-      userId: user?._id,
-      items: cart.map(item => ({
-        productId: item._id || item.id,
-        name: item.name,
-        quantity: item.quantity,
-        price: item.sellingPrice || item.price,
-      })),
+      userId,
+      items: itemsArray,
       shipping: {
         firstName: checkoutData.firstName,
         lastName: checkoutData.lastName,
@@ -55,32 +71,32 @@ const CheckoutPage = () => {
       paymentMethod: checkoutData.paymentMethod,
       subtotal: total,
       tax: tax,
-      total: finalTotal,
+      totalAmount: finalTotal,
       status: 'Pending',
       createdAt: new Date()
     };
+
+    console.log("🟡 Order Payload:", orderPayload);
 
     try {
       const response = await fetch('http://localhost:5000/api/orders', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}` // include token if required
+          Authorization: `Bearer ${token || localStorage.getItem('userToken')}`
         },
         body: JSON.stringify(orderPayload)
       });
 
       const data = await response.json();
-
       if (!response.ok) throw new Error(data.message || 'Order placement failed');
 
-      // Order successful
-      alert('Order placed successfully!');
-      setCart([]); // clear cart
-      navigate('/'); // redirect to home or order confirmation page
+      alert('✅ Order placed successfully!');
+      setCart([]);
+      navigate('/');
     } catch (error) {
       console.error('Checkout error:', error);
-      alert('Failed to place order: ' + error.message);
+      alert('❌ Failed to place order: ' + error.message);
     }
   };
 
@@ -101,7 +117,6 @@ const CheckoutPage = () => {
       <div className="container">
         <h1 className="page-title">Checkout</h1>
         <div className="checkout-layout">
-          {/* Checkout Form */}
           <div className="checkout-form-container">
             <form onSubmit={handleSubmit} className="checkout-form">
               <h3 className="form-section-title">Shipping Information</h3>
@@ -130,7 +145,6 @@ const CheckoutPage = () => {
             </form>
           </div>
 
-          {/* Order Summary */}
           <div className="order-summary-sidebar">
             <h3 className="summary-title">Order Summary</h3>
             <div className="order-items">

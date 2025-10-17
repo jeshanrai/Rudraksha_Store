@@ -1,59 +1,54 @@
-// server.js (or app.js)
+// server.js
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 require('dotenv').config();
 
+// Import route files
 const authRoutes = require('./routes/auth');
 const adminRoutes = require('./routes/admin');
-// Import your other existing routes
-// const productRoutes = require('./routes/products');
-// const userRoutes = require('./routes/users');
+const productRoutes = require('./routes/productRoutes');
+const orderRoutes = require('./routes/orderRoutes'); // ✅ new route
 
 const app = express();
 
-// Middleware
+// ===== Middleware =====
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ limit: '10mb', extended: true }));
 
-// MongoDB connection
+// ===== MongoDB connection =====
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/rudraksha_store', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
-.then(() => console.log('MongoDB connected'))
-.catch(err => console.log('MongoDB connection error:', err));
+.then(() => console.log('✅ MongoDB connected successfully'))
+.catch(err => console.error('❌ MongoDB connection error:', err));
 
-// Routes
+// ===== API Routes =====
 app.use('/api/auth', authRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/products', productRoutes);
+app.use('/api/orders', orderRoutes); // ✅ added order management route
 
-// Add your existing routes here
-// app.use('/api/products', productRoutes);
-// app.use('/api/users', userRoutes);
-
-// Health check route
+// ===== Health Check =====
 app.get('/api/health', (req, res) => {
-  res.json({ message: 'Server is running', timestamp: new Date().toISOString() });
+  res.json({ message: 'Server is running fine ✅', timestamp: new Date().toISOString() });
 });
-app.use('/api/products', require('./routes/productRoutes'));
 
-// Error handling middleware
+// ===== Error Handling Middleware =====
 app.use((err, req, res, next) => {
-  console.error(err.stack);
+  console.error('❌ Server Error:', err.stack);
   res.status(500).json({ message: 'Something went wrong!', error: err.message });
 });
 
-// Handle 404
+// ===== Handle 404 =====
 app.use((req, res) => {
   res.status(404).json({ message: 'Route not found' });
 });
 
+// ===== Start Server =====
 const PORT = process.env.PORT || 5000;
-
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
 
 module.exports = app;
