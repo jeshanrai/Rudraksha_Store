@@ -95,45 +95,68 @@
   100% { transform: translateY(0px); }
 }
 
-/* CATEGORIES */
-.categories-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 1.5rem;
+.categories-section {
+  padding: 40px 0;
+  background-color: #f9f9f9;
 }
-.category-card {
-  background: #fff;
-  border-radius: 16px;
-  padding: 1.5rem;
+
+.container {
+  width: 90%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.section-title {
   text-align: center;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  opacity: 0;
-  transform: translateY(20px);
-  animation: fadeInUp 0.8s forwards;
+  font-size: 2rem;
+  margin-bottom: 20px;
+  color: #333;
 }
-.category-card:nth-child(1) { animation-delay: 0.1s; }
-.category-card:nth-child(2) { animation-delay: 0.2s; }
-.category-card:nth-child(3) { animation-delay: 0.3s; }
-.category-card:nth-child(4) { animation-delay: 0.4s; }
-.category-card:nth-child(5) { animation-delay: 0.5s; }
-.category-card:nth-child(6) { animation-delay: 0.6s; }
+
+/* ---- Horizontal Carousel ---- */
+.categories-carousel {
+  display: flex;
+  gap: 20px;
+  overflow-x: hidden; /* hide scroll */
+  cursor: grab;
+  padding-bottom: 10px;
+}
+
+.categories-carousel:active {
+  cursor: grabbing;
+}
+
+.category-card {
+  min-width: 150px;
+  flex-shrink: 0;
+  background-color: #fff;
+  border-radius: 12px;
+  padding: 15px;
+  text-align: center;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
 
 .category-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+  transform: translateY(-5px);
+  box-shadow: 0 6px 15px rgba(0,0,0,0.15);
 }
-.category-icon {
-  font-size: 2rem;
-  margin-bottom: 0.5rem;
+
+.mukhi-image {
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+  margin-bottom: 10px;
 }
+
 .category-name {
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   font-weight: 600;
-  color: #222;
+  margin-bottom: 5px;
 }
+
 .category-description {
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   color: #666;
 }
 
