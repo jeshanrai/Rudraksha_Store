@@ -1,62 +1,74 @@
-import React, { useRef, useEffect } from 'react';
-import '../../pages/homepage.css';
+import React, { useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import "../../pages/homepage.css";
 
-const mukhiData = Array.from({ length: 24 }, (_, i) => ({
-  mukhi: i + 1,
-  name: `${i + 1} Mukhi`,
-  description: `Description for ${i + 1} Mukhi`,
-  image: `/images/${i + 1}-mukhi.png`,
-}));
+const mukhiData = Array.from({ length: 21 }, (_, i) => i + 1)
+  .filter((num) => num !== 1)
+  .map((num) => ({
+    mukhi: num,
+    name: `${num} Mukhi`,
+    description: `Description for ${num} Mukhi`,
+    image: `/rudraksha_image/${num}mukhi.png`,
+  }));
 
 const CategoriesSection = () => {
+  const navigate = useNavigate();
   const carouselRef = useRef(null);
+
   let isDragging = false;
   let startX;
   let scrollLeft;
 
-  // ----- Mouse Drag Handlers -----
+  // ✅ Mouse Drag
   const handleMouseDown = (e) => {
     isDragging = true;
     startX = e.pageX - carouselRef.current.getBoundingClientRect().left;
     scrollLeft = carouselRef.current.scrollLeft;
   };
 
-  const handleMouseLeave = () => { isDragging = false; };
-  const handleMouseUp = () => { isDragging = false; };
+  const handleMouseLeave = () => {
+    isDragging = false;
+  };
+
+  const handleMouseUp = () => {
+    isDragging = false;
+  };
+
   const handleMouseMove = (e) => {
     if (!isDragging) return;
     e.preventDefault();
     const x = e.pageX - carouselRef.current.getBoundingClientRect().left;
-    const walk = (x - startX) * 2; // scroll speed
+    const walk = (x - startX) * 2;
     carouselRef.current.scrollLeft = scrollLeft - walk;
   };
 
-  // ----- Automatic Sliding -----
+  // ✅ Automatic Sliding
   useEffect(() => {
     const carousel = carouselRef.current;
     let requestId;
 
     const slide = () => {
       if (!isDragging) {
-        carousel.scrollLeft += 1; // pixels per frame
+        carousel.scrollLeft += 3;
         if (carousel.scrollLeft >= carousel.scrollWidth / 2) {
-          carousel.scrollLeft = 0; // reset for infinite loop
+          carousel.scrollLeft = 0;
         }
       }
       requestId = requestAnimationFrame(slide);
     };
 
     requestId = requestAnimationFrame(slide);
-
     return () => cancelAnimationFrame(requestId);
   }, []);
 
-  const duplicatedData = mukhiData.concat(mukhiData); // for infinite loop
+  // ✅ Duplicate mukhi list
+  const duplicatedData = mukhiData.concat(mukhiData);
 
   return (
     <section className="categories-section">
       <div className="container">
         <h2 className="section-title">Shop by Mukhi</h2>
+
         <div
           className="categories-carousel"
           ref={carouselRef}
@@ -66,12 +78,18 @@ const CategoriesSection = () => {
           onMouseMove={handleMouseMove}
         >
           {duplicatedData.map((item, index) => (
-            <div key={index} className="category-card">
-              <div className="category-icon">
-                <img src={item.image} alt={item.name} className="mukhi-image" />
+            <div
+              key={index}
+              className="mukhi-card"
+              onClick={() => navigate(`/mukhi/${item.mukhi}`)}
+            >
+              <div className="mukhi-title">
+                {item.mukhi} Mukhi Nepali Rudraksha
               </div>
-              <h3 className="category-name">{item.name}</h3>
-              <p className="category-description">{item.description}</p>
+
+              <div className="mukhi-image-wrapper">
+                <img src={item.image} alt={item.name} className="mukhi-img" />
+              </div>
             </div>
           ))}
         </div>

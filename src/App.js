@@ -1,48 +1,80 @@
-import React, { Suspense, lazy } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
-import { AppProvider } from './context/AppContext';
-import { AuthProvider, useAuth } from './context/AuthContext';
-import ProtectedRoute from './components/ProtectedRoute';
-import Header from './components/Header/Header';
-import Footer from './components/Footer/Footer';
-import LoadingSpinner from './components/common/LoadingSpinner';
-import About from './pages/About';
-import WishlistPage from './pages/WishlistPage';
-import './styles.css';
+import React, { Suspense, lazy } from "react";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+  useLocation,
+} from "react-router-dom";
+import { AppProvider } from "./context/AppContext";
+import { AuthProvider, useAuth } from "./context/AuthContext";
+import ProtectedRoute from "./components/ProtectedRoute";
+import Header from "./components/Header/Header";
+import Footer from "./components/Footer/Footer";
+import LoadingSpinner from "./components/common/LoadingSpinner";
+import About from "./pages/About";
+import WishlistPage from "./pages/WishlistPage";
+import "./styles.css";
 
-// Lazy load user pages
-const HomePage = lazy(() => import('./pages/HomePage'));
-const ProductsPage = lazy(() => import('./pages/ProductsPage'));
-const ProductDetailPage = lazy(() => import('./pages/ProductDetailPage'));
-const CartPage = lazy(() => import('./pages/CartPage'));
-const CheckoutPage = lazy(() => import('./pages/CheckoutPage'));
-const LoginPage = lazy(() => import('./pages/LoginPage'));
-const RegisterPage = lazy(() => import('./pages/RegisterPage'));
-const ProfilePage = lazy(() => import('./pages/ProfilePage'));
-const NotFoundPage = lazy(() => import('./pages/NotFoundPage'));
+// ✅ Lazy load user pages
+const HomePage = lazy(() => import("./pages/HomePage"));
+const ProductsPage = lazy(() => import("./pages/ProductsPage"));
+const ProductDetailPage = lazy(() => import("./pages/ProductDetailPage"));
+const CartPage = lazy(() => import("./pages/CartPage"));
+const CheckoutPage = lazy(() => import("./pages/CheckoutPage"));
+const LoginPage = lazy(() => import("./pages/LoginPage"));
+const RegisterPage = lazy(() => import("./pages/RegisterPage"));
+const ProfilePage = lazy(() => import("./pages/ProfilePage"));
+const NotFoundPage = lazy(() => import("./pages/NotFoundPage"));
 
-// Admin layout + pages
-const AdminLayout = lazy(() => import('./layouts/AdminLayout'));
-const AdminDashboardPage = lazy(() => import('./pages/admin/AdminDashboardPage'));
-const InventoryManagement = lazy(() => import('./pages/admin/InventoryManagement'));
-const SalesManagement = lazy(() => import('./pages/admin/SalesManagement'));
-const OrderManagement = lazy(() => import('./pages/admin/OrderManagement'));
+// ✅ Mukhi-related pages
+const CategoriesSection = lazy(() =>
+  import("./components/Home/CategoriesSection")
+);
+const MukhiDescriptionPage = lazy(() =>
+  import("./components/Home/MukhiDescriptionPage")
+);
 
-// Wrapper to conditionally show Header
+// ✅ Admin layout + pages
+const AdminLayout = lazy(() => import("./layouts/AdminLayout"));
+const AdminDashboardPage = lazy(() =>
+  import("./pages/admin/AdminDashboardPage")
+);
+const InventoryManagement = lazy(() =>
+  import("./pages/admin/InventoryManagement")
+);
+const SalesManagement = lazy(() =>
+  import("./pages/admin/SalesManagement")
+);
+const OrderManagement = lazy(() =>
+  import("./pages/admin/OrderManagement")
+);
+
+// ✅ Layout wrapper for conditional header/footer
 const LayoutWrapper = ({ children }) => {
   const { user } = useAuth();
   const location = useLocation();
 
-  // Show header only if not in /admin routes
-  const showHeader = !location.pathname.startsWith('/admin');
+  const path = location.pathname;
+
+  // Hide the footer for /admin and /mukhi routes
+  const hideFooter = path.startsWith("/admin") || path.startsWith("/mukhi");
 
   return (
     <>
-      {showHeader && <Header />}
+      {/* ✅ Keep the header always visible (except admin) */}
+      {!path.startsWith("/admin") && <Header />}
+
       {children}
+
+      {/* ✅ Hide footer on mukhi and admin routes */}
+      {!hideFooter && <Footer />}
     </>
   );
 };
+
+
+
 
 function App() {
   return (
@@ -52,7 +84,7 @@ function App() {
           <LayoutWrapper>
             <Suspense fallback={<LoadingSpinner />}>
               <Routes>
-                {/* Public Routes */}
+                {/* ✅ Public Routes */}
                 <Route path="/" element={<HomePage />} />
                 <Route path="/about" element={<About />} />
                 <Route path="/login" element={<LoginPage />} />
@@ -61,7 +93,11 @@ function App() {
                 <Route path="/product/:id" element={<ProductDetailPage />} />
                 <Route path="/wishlist" element={<WishlistPage />} />
 
-                {/* Protected User Routes */}
+                {/* ✅ Mukhi Routes */}
+                <Route path="/mukhi" element={<CategoriesSection />} />
+                <Route path="/mukhi/:mukhiId" element={<MukhiDescriptionPage />} />
+
+                {/* ✅ Protected User Routes */}
                 <Route
                   path="/cart"
                   element={
@@ -87,7 +123,7 @@ function App() {
                   }
                 />
 
-                {/* Protected Admin Routes with Layout */}
+                {/* ✅ Admin Routes with Protected Layout */}
                 <Route
                   path="/admin"
                   element={
@@ -99,11 +135,11 @@ function App() {
                   <Route path="dashboard" element={<AdminDashboardPage />} />
                   <Route path="inventory" element={<InventoryManagement />} />
                   <Route path="sales" element={<SalesManagement />} />
-                  <Route path='order' element={<OrderManagement/>}/>
+                  <Route path="order" element={<OrderManagement />} />
                   <Route index element={<Navigate to="dashboard" replace />} />
                 </Route>
 
-                {/* 404 Not Found */}
+                {/* ✅ 404 Not Found */}
                 <Route path="*" element={<NotFoundPage />} />
               </Routes>
             </Suspense>

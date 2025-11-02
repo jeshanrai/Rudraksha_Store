@@ -117,48 +117,80 @@
 .categories-carousel {
   display: flex;
   gap: 20px;
-  overflow-x: hidden; /* hide scroll */
+  overflow-x: scroll; /* allow horizontal scroll */
+  scroll-behavior: smooth;
   cursor: grab;
-  padding-bottom: 10px;
+  padding: 15px 0;
 }
 
 .categories-carousel:active {
   cursor: grabbing;
 }
 
-.category-card {
-  min-width: 150px;
-  flex-shrink: 0;
-  background-color: #fff;
-  border-radius: 12px;
-  padding: 15px;
+/* Hide default scrollbar */
+.categories-carousel::-webkit-scrollbar {
+  display: none;
+}
+
+/* ---- Mukhi Card ---- */
+.mukhi-card {
+  width: 230px;
+  min-width: 230px;
+  background: #ffffff;
+  border-radius: 15px;
+  overflow: hidden;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  margin: 0 12px;
+}
+
+.mukhi-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.2);
+}
+
+/* ---- Top Orange Title ---- */
+.mukhi-title {
+  background: linear-gradient(90deg, #b85c00, #ff9d00);
+  color: white;
   text-align: center;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-  transition: transform 0.3s, box-shadow 0.3s;
+  padding: 10px;
+  font-size: 16px;
+  font-weight: bold;
 }
 
-.category-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+/* ---- Center Image ---- */
+.mukhi-image-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 22px;
 }
 
-.mukhi-image {
-  width: 60px;
-  height: 60px;
+.mukhi-img {
+  width: 110px;
+  height: 110px;
   object-fit: contain;
   margin-bottom: 10px;
 }
 
+/* ---- Category Text ---- */
 .category-name {
   font-size: 1.1rem;
   font-weight: 600;
+  text-align: center;
   margin-bottom: 5px;
 }
 
 .category-description {
   font-size: 0.9rem;
   color: #666;
+  text-align: center;
+  padding: 0 8px 12px 8px;
 }
+
+
 
 /* PRODUCTS */
 .products-grid {
@@ -262,4 +294,73 @@
 @keyframes fadeInUp {
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+/* ✅ Wrapper */
+.slider-wrapper {
+  position: relative;
+  height: auto;
+  width: 100%;
+  padding: 20px 0;
+}
+
+/* ✅ Arrows */
+.slider-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  width: 45px;
+  height: 45px;
+  border: none;
+  background: white;
+  border-radius: 50%;
+  box-shadow: 0 4px 15px rgba(0,0,0,.15);
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: 0.25s ease;
+}
+
+.slider-arrow:hover {
+  transform: translateY(-50%) scale(1.15);
+}
+
+.slider-arrow.left {
+  left: -10px;
+}
+
+.slider-arrow.right {
+  right: -10px;
+}
+
+/* ✅ Horizontal Slider */
+.products-slider {
+  display: flex;
+  gap: 20px;
+  overflow-x: scroll;
+  scroll-behavior: smooth;
+  padding-bottom: 10px;
+  cursor: grab;
+  white-space: nowrap;
+}
+
+/* Hide scrollbar */
+.products-slider::-webkit-scrollbar {
+  display: none;
+}
+
+/* ✅ Equal-size Cards (more premium look) */
+.slider-card {
+  width: 260px;
+  min-width: 260px;
+  height: 380px;
+  flex-shrink: 0;
+  transition: transform .25s ease, box-shadow .25s;
+}
+
+.slider-card:hover {
+  transform: scale(1.07);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
 }
