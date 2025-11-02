@@ -35,6 +35,30 @@ router.get('/', authMiddleware, async (req, res) => {
   }
 });
 
+
+// -------------------------------------------
+// ✅ GET /api/orders/my-orders  (User's own orders)
+// -------------------------------------------
+router.get('/my-orders', authMiddleware, async (req, res) => {
+  try {
+    const userId = req.user.id; // from decoded token
+
+    const orders = await Order.find({ user: userId })
+      .populate("orderItems.product", "name sellingPrice images")
+      .sort({ createdAt: -1 });
+
+    res.json({
+      success: true,
+      count: orders.length,
+      orders,
+    });
+
+  } catch (error) {
+    console.error("❌ Error fetching user orders:", error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
 // ----------------------------
 // POST /api/orders - Create a new order
 // ----------------------------

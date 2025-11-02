@@ -1,5 +1,5 @@
-// src/pages/ProductsPage.js
 import React, { useState, useEffect, useMemo } from 'react';
+import { useLocation } from 'react-router-dom';
 import { Filter, Grid, List } from 'lucide-react';
 import ProductCard from '../components/ProductCard/ProductCard';
 import LoadingSpinner from '../components/common/LoadingSpinner';
@@ -17,6 +17,21 @@ const ProductsPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filters, setFilters] = useState({ mukhi: [] });
   const [sortBy, setSortBy] = useState('featured');
+
+  const location = useLocation();
+
+  // ✅ Read mukhi from query param (e.g., /products?mukhi=5)
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const mukhiParam = params.get("mukhi");
+
+    if (mukhiParam) {
+      setFilters((prev) => ({
+        ...prev,
+        mukhi: [Number(mukhiParam)],
+      }));
+    }
+  }, [location.search]);
 
   // ================== FETCH PRODUCTS ==================
   useEffect(() => {
@@ -170,32 +185,31 @@ const ProductsPage = () => {
               showFilters ? 'filters-sidebar-open' : ''
             }`}
           >
-            <h3 className="filters-title">Filters</h3>
 
-            {/* Mukhi Filter */}
-            <div className="filter-group">
-              <h4 className="filter-label">Mukhi Type</h4>
-              <div className="filter-options">
-                {[1, 5, 6, 7, 11, 14].map((mukhi) => (
-                  <label key={mukhi} className="filter-option">
-                    <input
-                      type="checkbox"
-                      checked={filters.mukhi.includes(mukhi)}
-                      onChange={(e) => {
-                        setFilters((prev) => ({
-                          ...prev,
-                          mukhi: e.target.checked
-                            ? [...prev.mukhi, mukhi]
-                            : prev.mukhi.filter((m) => m !== mukhi),
-                        }));
-                      }}
-                    />
-                    {mukhi} Mukhi (
-                    {products.filter((p) => p.mukhi === mukhi).length})
-                  </label>
-                ))}
-              </div>
-            </div>
+           {/* Mukhi Filter */}
+<div className="filter-group">
+  <h4 className="filter-label">Mukhi Type</h4>
+  <div className="filter-options">
+    {Array.from({ length: 20 }, (_, i) => i + 2).map((mukhi) => (
+      <label key={mukhi} className="filter-option">
+        <input
+          type="checkbox"
+          checked={filters.mukhi.includes(mukhi)}
+          onChange={(e) => {
+            setFilters((prev) => ({
+              ...prev,
+              mukhi: e.target.checked
+                ? [...prev.mukhi, mukhi]
+                : prev.mukhi.filter((m) => m !== mukhi),
+            }));
+          }}
+        />
+        {mukhi} Mukhi ({products.filter((p) => p.mukhi === mukhi).length})
+      </label>
+    ))}
+  </div>
+</div>
+
 
             <button onClick={resetFilters} className="clear-filters-btn">
               Clear All Filters

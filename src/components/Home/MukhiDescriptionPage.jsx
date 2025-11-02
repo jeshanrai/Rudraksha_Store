@@ -221,11 +221,12 @@ const MukhiDescriptionPage = () => {
             <div className="mukhi-info">
               <p className="mukhi-description-text">{mukhi.description}</p>
               <button
-                className="view-product-btn"
-                onClick={() => navigate(`/products/${mukhi.mukhi}`)}
-              >
-                🔮 View Product
-              </button>
+  className="view-product-btn"
+  onClick={() => navigate(`/products?mukhi=${mukhi.mukhi}`)}
+>
+  🔮 View Product
+</button>
+
             </div>
           </div>
         </div>

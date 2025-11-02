@@ -197,3 +197,8 @@
 .order-total {
   font-weight: 600;
 }
+.menu-item.active {
+  background: linear-gradient(90deg, #ff8a00, #e52e71);
+  color: #fff;
+  box-shadow: 0 3px 8px rgba(229,46,113,0.3);
+}

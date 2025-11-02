@@ -6,7 +6,6 @@ export default function About() {
   return (
     <div>
         <NewsletterSection />
-        <Footer  />
       
     </div>
   )

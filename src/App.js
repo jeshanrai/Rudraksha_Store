@@ -56,9 +56,13 @@ const LayoutWrapper = ({ children }) => {
   const location = useLocation();
 
   const path = location.pathname;
+const hideFooter =
+  path.startsWith("/admin") ||
+  path.startsWith("/mukhi") ||
+  path.startsWith("/products") ||
+  path.startsWith("/product");
 
-  // Hide the footer for /admin and /mukhi routes
-  const hideFooter = path.startsWith("/admin") || path.startsWith("/mukhi");
+  
 
   return (
     <>
