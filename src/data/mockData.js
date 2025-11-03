@@ -20,9 +20,18 @@ export const mockProducts = [
 
 export const mockTestimonials = [
   {
-    name: "Priya Sharma",
+    name: "Aarav Shrestha",
     rating: 5,
-    text: "Amazing quality Rudraksha beads! I can feel the positive energy. Highly recommended!"
+    text: "I’ve used a few platforms before, but this one just feels effortless. The interface is clean, the features work smoothly, and I love how fast the support team responds."
   },
-  // ... other testimonials
+  {
+    name: "Priya Koirala",
+    rating: 4,
+    text: "Everything works great, but I’d love to see a dark mode in the next update. Overall, I’m really happy with how reliable it’s been so far!"
+  },
+  {
+    name: "Sandeep Sharma",
+    rating: 5,
+    text: "The experience was seamless from start to finish. Setting up my account took barely a minute and it’s been running perfectly ever since. Highly recommend!"
+  }
 ];

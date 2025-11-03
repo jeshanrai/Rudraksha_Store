@@ -7,6 +7,8 @@ import CategoriesSection from '../components/Home/CategoriesSection';
 import FeaturedSection from '../components/Home/FeaturedSection';
 import TestimonialsSection from '../components/Home/TestimonialsSection';
 import About from './About';
+import BodySection from '../components/Home/BodySection';
+import FaqSection from '../components/Home/FaqSection';
 
 const HomePage = () => {
   const { products, isLoading } = useApp();
@@ -33,8 +35,10 @@ const HomePage = () => {
     <div>
       <HeroSection />
       <CategoriesSection />
+      <BodySection />
       <FeaturedSection featuredProducts={featuredProducts} />
       <TestimonialsSection />
+      <FaqSection />
       <div id="about">
         <About />
       </div>
