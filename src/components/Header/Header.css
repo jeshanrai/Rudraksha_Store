@@ -1,167 +1,228 @@
-/* ===== Modern Header (Glassmorphism + Minimal) ===== */
+/* ===== Sacred Rudraksha Header ===== */
 .modern-header {
   position: sticky;
   top: 0;
-  z-index: 50;
-  background: rgba(255, 255, 255, 0.25);
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-  transition: background 0.3s ease;
+  width: 100%;
+  background: linear-gradient(90deg, #b85c00, #ff9d00);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  z-index: 1000;
+  transition: all 0.3s ease;
 }
 
 .header-container {
-  max-width: 1200px;
-  margin: auto;
-  padding: 0.7rem 1.5rem;
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 0.8rem 2rem;
   display: flex;
-  align-items: center;
   justify-content: space-between;
+  align-items: center;
 }
 
-/* ===== Logo ===== */
+/* Align logo slightly more to the left */
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex: 1;
+}
+
 .logo {
-  font-size: 1.4rem;
-  font-weight: 600;
-  color: #222;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700;
+  font-size: 1.45rem;
+  color: #fff;
   text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
   letter-spacing: 0.5px;
-  transition: color 0.3s ease;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.logo span {
+  text-shadow: 0 0 6px rgba(255, 255, 255, 0.3);
 }
 
 .logo:hover {
-  color: #8b4513;
+  transform: scale(1.05);
+  opacity: 0.9;
 }
 
-/* ===== Nav ===== */
+/* Nav Links */
 .nav {
   display: flex;
-  gap: 1.5rem;
+  gap: 2rem;
+  align-items: center;
 }
 
 .nav-link {
   background: none;
   border: none;
-  color: #222;
+  font-family: 'Inter', sans-serif;
   font-size: 1rem;
-  font-weight: 500;
+  color: #fff;
   cursor: pointer;
-  transition: color 0.3s ease, transform 0.2s;
+  position: relative;
+  transition: color 0.3s ease;
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -3px;
+  width: 0;
+  height: 2px;
+  background: #fff;
+  transition: width 0.3s ease;
 }
 
 .nav-link:hover {
-  color: #8b4513;
-  transform: translateY(-1px);
+  color: #fff;
 }
 
-/* ===== Search ===== */
+.nav-link:hover::after {
+  width: 100%;
+}
+
+/* Search Bar */
 .search-container {
   position: relative;
   display: flex;
   align-items: center;
-  background: #f5f5f5;
-  border-radius: 25px;
-  padding: 0.4rem 0.8rem;
-  transition: box-shadow 0.2s ease;
-}
-
-.search-container:focus-within {
-  box-shadow: 0 0 0 2px rgba(139, 69, 19, 0.3);
 }
 
 .search-icon {
   position: absolute;
   left: 10px;
-  color: #666;
+  color: #fff;
+  pointer-events: none;
+  opacity: 0.8;
 }
 
 .search-input {
-  border: none;
+  padding: 8px 10px 8px 34px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
   outline: none;
-  background: transparent;
-  padding: 0.4rem 0.4rem 0.4rem 2rem;
-  font-size: 0.95rem;
-  width: 160px;
-  transition: width 0.3s ease;
+  transition: all 0.3s ease;
+  width: 180px;
 }
 
 .search-input:focus {
-  width: 200px;
+  border-color: #fff;
+  background: rgba(255, 255, 255, 0.25);
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
 }
 
-/* ===== Icons ===== */
+/* Right Icons */
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
 .icon-btn {
   position: relative;
-  margin-left: 0.8rem;
-  color: #333;
+  background: black !important;
+  border: none;
+  color: #fff;
   cursor: pointer;
-  transition: transform 0.2s, color 0.3s;
+  transition: transform 0.2s ease, opacity 0.3s ease;
+  display: flex;
+  align-items: center;
 }
 
-.icon-btn:hover {
-  color: #8b4513;
+
+.icon-btn-cart-btn {
+  position: relative;
+  background: #000;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 0.8rem;
+  font-weight: 600;
+  transition: transform 0.25s ease, box-shadow 0.3s ease, background 0.3s ease;
+}
+
+/* Hover effect */
+.icon-btn-cart-btn:hover {
   transform: scale(1.1);
+  background: linear-gradient(90deg, #b85c00, #ff9d00);
+  box-shadow: 0 0 8px rgba(255, 157, 0, 0.5);
 }
 
-.icon {
+/* Icon inside the button */
+.icon-btn-cart-btn .icon {
   width: 22px;
   height: 22px;
+  color: #fff;
 }
 
-/* ===== Cart Badge ===== */
-.cart-badge {
+/* Cart item badge */
+.icon-btn-cart-btn .cart-badge {
   position: absolute;
-  top: -6px;
-  right: -8px;
-  background: #8b4513;
-  color: white;
-  font-size: 11px;
+  top: -4px;
+  right: -6px;
+  background: #ff3333;
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 600;
   border-radius: 50%;
-  padding: 2px 5px;
-  font-weight: bold;
+  padding: 3px 6px;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
 }
 
-/* ===== Mobile Menu ===== */
+
+/* Mobile Menu */
 .mobile-menu-btn {
   display: none;
   background: none;
   border: none;
-  color: #333;
+  color: #fff;
+  cursor: pointer;
 }
 
 @media (max-width: 768px) {
-  .mobile-menu-btn {
-    display: block;
-    margin-right: 0.5rem;
-  }
-
   .nav {
     position: absolute;
-    top: 64px;
+    top: 100%;
     left: 0;
-    right: 0;
-    background: rgba(255, 255, 255, 0.95);
+    background: linear-gradient(180deg, #b85c00, #ff9d00);
+    width: 100%;
     flex-direction: column;
     align-items: center;
-    gap: 1rem;
-    padding: 1rem 0;
-    border-top: 1px solid #eee;
-    transform: translateY(-120%);
-    opacity: 0;
-    transition: transform 0.3s ease, opacity 0.3s ease;
+    gap: 1.5rem;
+    padding: 1.5rem 0;
+    transform: translateY(-200%);
+    transition: transform 0.4s ease;
   }
 
   .nav.open {
     transform: translateY(0);
-    opacity: 1;
   }
 
-  .search-container {
-    display: none;
+  .mobile-menu-btn {
+    display: block;
   }
-}
 
-/* ===== Right Section ===== */
-.header-right {
-  display: flex;
-  align-items: center;
+  .search-input {
+    width: 130px;
+  }
+
+  .header-container {
+    padding: 0.8rem 1.2rem;
+  }
+
+  .logo {
+    font-size: 1.3rem;
+  }
 }

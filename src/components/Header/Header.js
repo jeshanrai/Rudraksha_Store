@@ -38,7 +38,7 @@ const Header = () => {
   return (
     <header className="modern-header">
       <div className="header-container">
-        {/* Left */}
+        {/* Left Section */}
         <div className="header-left">
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -47,25 +47,26 @@ const Header = () => {
           >
             {isMenuOpen ? <X className="icon" /> : <Menu className="icon" />}
           </button>
+
           <Link to="/" className="logo">
-            🕉️ Sacred Rudraksha
+            🕉️ <span>Sacred Rudraksha</span>
           </Link>
         </div>
 
-        {/* Nav */}
+        {/* Navigation */}
         <nav className={`nav ${isMenuOpen ? 'open' : ''}`}>
           <button className="nav-link" onClick={handleHomeClick}>Home</button>
           <button className="nav-link" onClick={handleAboutClick}>About</button>
           <Link to="/products" className="nav-link">Products</Link>
         </nav>
 
-        {/* Right */}
+        {/* Right Section */}
         <div className="header-right">
           <div className="search-container">
             <Search className="search-icon" />
             <input
               type="text"
-              placeholder="Search..."
+              placeholder="Search sacred items..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               onKeyPress={handleSearch}
@@ -77,15 +78,15 @@ const Header = () => {
             <Heart className="icon" />
           </Link>
 
-          <Link to="/cart" className="icon-btn cart-btn" aria-label="Shopping cart">
+          <Link to="/cart" className="icon-btn-cart-btn" aria-label="Shopping cart">
             <ShoppingCart className="icon" />
             {cartItemsCount > 0 && (
               <span className="cart-badge">{cartItemsCount}</span>
             )}
           </Link>
 
-          <Link 
-            to={user ? '/profile' : '/login'} 
+          <Link
+            to={user ? '/profile' : '/login'}
             className="icon-btn"
             aria-label={user ? 'Profile' : 'Login'}
           >
