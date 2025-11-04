@@ -66,7 +66,7 @@ const FaqSection = () => {
     <section className="faq-section">
       <div className="faq-container">
         <div className="faq-image">
-          <img src="/images/rudraksha-hand.jpg" alt="Rudraksha beads" />
+          <img src="/rudraksha_image/faqsection.png" alt="Rudraksha beads" />
         </div>
         <div className="faq-content">
           <h2 className="faq-title">Frequently Asked Questions</h2>

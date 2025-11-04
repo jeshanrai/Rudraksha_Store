@@ -1,0 +1,83 @@
+.features-section {
+  background: #0c2217; /* deep premium green */
+  padding: 60px 0;
+}
+
+.features-container {
+  width: 90%;
+  max-width: 1400px;
+  margin: auto;
+  display: flex;
+  justify-content: space-between;
+  gap: 30px;
+  flex-wrap: wrap;
+  text-align: center;
+}
+
+.feature-item {
+  flex: 1;
+  min-width: 250px;
+  padding: 20px;
+}
+
+.icon-circle {
+  height: 90px;
+  width: 90px;
+  border-radius: 50%;
+  border: 2px solid #c89b4b; /* premium gold */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto 20px auto;
+}
+
+.icon-circle svg {
+  height: 42px;
+  width: 42px;
+  stroke: #c89b4b; /* same gold color */
+}
+
+.feature-title {
+  color: white;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+}
+
+.feature-desc {
+  color: #d1d1d1;
+  font-size: 14px;
+}
+
+/* Decorative bottom border */
+.features-section::after {
+  content: "";
+  display: block;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(
+    to right,
+    transparent,
+    #c89b4b,
+    #e0b97d,
+    #c89b4b,
+    transparent
+  );
+  margin: 0;
+  padding: 0;
+  position: relative;
+}
+
+/* Optional: add a small decorative dot pattern */
+.features-section::before {
+  content: "✦ ✦ ✦";
+  font-size: 14px;
+  color: #c89b4b;
+  display: block;
+  text-align: center;
+  margin-top: 10px;
+  margin-bottom: -8px; /* pull it close to the border */
+  letter-spacing: 10px;
+}

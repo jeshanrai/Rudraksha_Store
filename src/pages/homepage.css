@@ -246,7 +246,6 @@
   text-align: center;
   padding: 4rem 0;
   border-radius: 16px;
-  margin-top: 3rem;
   opacity: 0;
   transform: translateY(20px);
   animation: fadeInUp 0.8s forwards 0.5s;

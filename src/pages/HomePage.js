@@ -9,6 +9,7 @@ import TestimonialsSection from '../components/Home/TestimonialsSection';
 import About from './About';
 import BodySection from '../components/Home/BodySection';
 import FaqSection from '../components/Home/FaqSection';
+import FeaturesSection from '../components/Home/FeaturesSection';
 
 const HomePage = () => {
   const { products, isLoading } = useApp();
@@ -41,6 +42,7 @@ const HomePage = () => {
       <FaqSection />
       <div id="about">
         <About />
+      <FeaturesSection />
       </div>
     </div>
   );
