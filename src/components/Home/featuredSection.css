@@ -1,5 +1,5 @@
 .featured-section {
-  padding: 60px 0;
+padding: 0px;
   background: #f5f5f5;
 }
 
@@ -81,7 +81,7 @@
   font-weight: 600;
 }
 
-.eye-button-modern {
+.eye-button-modern-featured {
   position: absolute;
   bottom: 10px;
   right: 10px;
@@ -95,7 +95,7 @@
   transition: background 0.3s;
 }
 
-.eye-button-modern:hover {
+.eye-button-modern-featured:hover {
   background: #fff;
 }
 

@@ -7,7 +7,7 @@ import '../../pages/homepage.css';
 const TestimonialsSection = () => (
   <section className="testimonials-section">
     <div className="container">
-      <h2 className="section-title">What Our Customers Say</h2>
+      <h2 className="section-title-testimonials">What Our Customers Say</h2>
       <div className="testimonials-grid">
         {mockTestimonials.map((testimonial, index) => (
           <div key={index} className="testimonial-card">

@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../../pages/homepage.css";
 
@@ -14,70 +14,93 @@ const mukhiData = Array.from({ length: 21 }, (_, i) => i + 1)
 const CategoriesSection = () => {
   const navigate = useNavigate();
   const carouselRef = useRef(null);
+  const sectionRef = useRef(null);
+  const isVisible = useRef(false);
 
-  let isDragging = false;
-  let startX;
-  let scrollLeft;
+  const dragData = useRef({
+    isDragging: false,
+    startX: 0,
+    scrollLeft: 0,
+  });
 
-  // ✅ Mouse Drag
+  // ✅ Intersection Observer → Pause when user scrolls away
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        isVisible.current = entry.isIntersecting;
+      },
+      { threshold: 0.2 }
+    );
+
+    observer.observe(sectionRef.current);
+    return () => observer.disconnect();
+  }, []);
+
+  // ✅ Mouse drag handlers
   const handleMouseDown = (e) => {
-    isDragging = true;
-    startX = e.pageX - carouselRef.current.getBoundingClientRect().left;
-    scrollLeft = carouselRef.current.scrollLeft;
+    const carousel = carouselRef.current;
+    dragData.current.isDragging = true;
+    dragData.current.startX = e.pageX - carousel.offsetLeft;
+    dragData.current.scrollLeft = carousel.scrollLeft;
   };
 
-  const handleMouseLeave = () => {
-    isDragging = false;
-  };
-
-  const handleMouseUp = () => {
-    isDragging = false;
+  const stopDragging = () => {
+    dragData.current.isDragging = false;
   };
 
   const handleMouseMove = (e) => {
-    if (!isDragging) return;
+    if (!dragData.current.isDragging) return;
     e.preventDefault();
-    const x = e.pageX - carouselRef.current.getBoundingClientRect().left;
-    const walk = (x - startX) * 2;
-    carouselRef.current.scrollLeft = scrollLeft - walk;
+
+    const carousel = carouselRef.current;
+    const x = e.pageX - carousel.offsetLeft;
+    const walk = (x - dragData.current.startX) * 2;
+    carousel.scrollLeft = dragData.current.scrollLeft - walk;
   };
 
-  // ✅ Automatic Sliding
+  // ✅ Optimized Auto Slide
   useEffect(() => {
     const carousel = carouselRef.current;
-    let requestId;
+    let reqId;
 
-    const slide = () => {
-      if (!isDragging) {
-        carousel.scrollLeft += 3;
+    const autoSlide = () => {
+      // ✅ Pause conditions
+      if (
+        !dragData.current.isDragging &&
+        document.visibilityState === "visible" &&
+        isVisible.current
+      ) {
+        carousel.scrollLeft += 2;
+
         if (carousel.scrollLeft >= carousel.scrollWidth / 2) {
           carousel.scrollLeft = 0;
         }
       }
-      requestId = requestAnimationFrame(slide);
+
+      reqId = requestAnimationFrame(autoSlide);
     };
 
-    requestId = requestAnimationFrame(slide);
-    return () => cancelAnimationFrame(requestId);
+    reqId = requestAnimationFrame(autoSlide);
+    return () => cancelAnimationFrame(reqId);
   }, []);
 
-  // ✅ Duplicate mukhi list
-  const duplicatedData = mukhiData.concat(mukhiData);
+  // ✅ Infinite loop data
+  const duplicatedList = [...mukhiData, ...mukhiData];
 
   return (
-    <section className="categories-section">
+    <section className="categories-section" ref={sectionRef}>
       <div className="container">
-        <h2 className="section-title">Shop by Mukhi</h2>
+        <h2 className="section-title">Shop By Mukhi</h2>
 
         <div
           className="categories-carousel"
           ref={carouselRef}
           onMouseDown={handleMouseDown}
-          onMouseLeave={handleMouseLeave}
-          onMouseUp={handleMouseUp}
+          onMouseLeave={stopDragging}
+          onMouseUp={stopDragging}
           onMouseMove={handleMouseMove}
         >
-          {duplicatedData.map((item, index) => (
+          {duplicatedList.map((item, index) => (
             <div
               key={index}
               className="mukhi-card"
@@ -88,7 +111,11 @@ const CategoriesSection = () => {
               </div>
 
               <div className="mukhi-image-wrapper">
-                <img src={item.image} alt={item.name} className="mukhi-img" />
+                <img
+                  src={item.image}
+                  alt={item.name}
+                  className="mukhi-img"
+                />
               </div>
             </div>
           ))}

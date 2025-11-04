@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useRef, useEffect } from "react";
 import "./BodySection.css";
+import { motion, useAnimation, useInView } from "framer-motion";
 
 const BodySection = () => {
   const cards = [
@@ -41,31 +42,70 @@ const BodySection = () => {
     },
   ];
 
+  // ✅ Detect Section Visibility
+  const sectionRef = useRef(null);
+  const inView = useInView(sectionRef, { amount: 0.3 });
+  const controls = useAnimation();
+
+  useEffect(() => {
+    if (inView) {
+      controls.start("visible");
+    } else {
+      controls.start("center");
+    }
+  }, [inView, controls]);
+
+  // ✅ Animation Variants
+  const cardVariants = {
+    center: {
+      opacity: 0,
+      scale: 0.6,
+      x: 0,
+      y: 0,
+    },
+    visible: (i) => ({
+      opacity: 1,
+      scale: 1,
+      x: 0,
+      y: 0,
+      transition: {
+        delay: i * 0.12,
+        duration: 0.6,
+        ease: "easeOut",
+      },
+    }),
+  };
+
   return (
-    <section className="body-section">
+    <section className="body-section" ref={sectionRef}>
       <div className="cards-grid">
         {cards.map((card, index) => {
-          const isCenter = index === 1 || index === 4; // top + bottom center
+          const isCenter = index === 1 || index === 4;
 
           return (
-            <div
-              key={index}
-              className={`info-card ${card.dark ? "dark" : "light"} ${
-                isCenter ? "tall-card" : ""
-              }`}
-            >
-              {/* ✅ Full background image */}
+           <motion.div
+  key={index}
+  custom={index}
+  className={`info-card ${card.dark ? "dark" : "light"} ${
+    isCenter ? "tall-card" : ""
+  }`}
+  variants={cardVariants}
+  initial="center"
+  animate={controls}
+  whileHover={{ y: -6 }}   
+  transition={{ type: "spring", stiffness: 120 }}
+>
+
               <div
                 className="card-image"
                 style={{ backgroundImage: `url(${card.image})` }}
               ></div>
 
-              {/* ✅ Overlay content */}
               <div className="card-overlay">
                 <h3 className="card-title">{card.title}</h3>
                 <p className="card-text">{card.text}</p>
               </div>
-            </div>
+            </motion.div>
           );
         })}
       </div>

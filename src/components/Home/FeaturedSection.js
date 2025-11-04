@@ -142,7 +142,7 @@ const FeaturedSection = () => {
 
                           {/* ✅ Working eye button */}
                           <button
-                            className="eye-button-modern"
+                            className="eye-button-modern-featured"
                             title="View Product"
                             onClick={handleViewProduct}
                           >

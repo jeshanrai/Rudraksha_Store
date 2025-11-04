@@ -12,9 +12,10 @@
   grid-template-columns: repeat(3, 1fr);
   grid-gap: 24px;
   max-width: 1000px;
+  justify-items: center;  
 }
 
-/* ✅ Full-card Image Layout */
+/* Card Styling */
 .info-card {
   position: relative;
   border-radius: 16px;
@@ -31,7 +32,6 @@
   transform: translateY(-6px);
 }
 
-/* Themes */
 .info-card.dark {
   background-color: #0b2b1d;
   color: #fff;
@@ -43,31 +43,30 @@
   color: white;
 }
 
-/* ✅ Full Background Image */
+/* Background */
 .card-image {
   position: absolute;
-  inset: 0; /* shorthand for top:0 left:0 right:0 bottom:0 */
+  inset: 0;
   width: 100%;
   height: 100%;
   background-size: cover;
   background-position: center;
 }
 
-/* ✅ Text Overlay */
+/* Overlay */
 .card-overlay {
   position: relative;
   width: 100%;
   padding: 20px;
   background: linear-gradient(
     to top,
-    rgba(0,0,0,0.55),
-    rgba(0,0,0,0.25),
+    rgba(0, 0, 0, 0.55),
+    rgba(0, 0, 0, 0.25),
     transparent
   );
   z-index: 2;
 }
 
-/* Text Styling */
 .card-title {
   font-size: 1.25rem;
   font-weight: 700;
@@ -80,13 +79,14 @@
   max-width: 250px;
 }
 
-/* Tall Cards (center highlight) */
+/* ✅ Increased height for center cards */
 .tall-card {
-  min-height: 350px;
-  transform: scale(1.05);
+  min-height: 360px !important;
+  margin-top: -17px;
+  transform: scale(1.07);
 }
 
-/* Responsive Design */
+/* Responsive */
 @media (max-width: 900px) {
   .cards-grid {
     grid-template-columns: repeat(2, 1fr);

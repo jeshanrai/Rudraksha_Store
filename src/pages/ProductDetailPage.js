@@ -22,11 +22,18 @@ const ProductDetailPage = () => {
     return `data:image/jpeg;base64,${image}`;
   };
 
+  // ✅ FETCH PRODUCT DETAILS (always refetch when ID changes)
   useEffect(() => {
     const fetchProductDetails = async () => {
-      if (product) return;
       try {
         setIsLoading(true);
+
+        // if product is passed via navigation state, set it instantly
+        if (location.state?.product) {
+          setProduct(location.state.product);
+        }
+
+        // always fetch fresh data for accuracy
         const res = await fetch(`http://localhost:5000/api/products/${id}`);
         if (!res.ok) throw new Error('Failed to fetch');
         const data = await res.json();
@@ -37,16 +44,24 @@ const ProductDetailPage = () => {
         setIsLoading(false);
       }
     };
-    fetchProductDetails();
-  }, [id, product]);
 
+    fetchProductDetails();
+    setSelectedImage(0);
+    setQuantity(1);
+  }, [id, location.state]);
+
+  // ✅ FETCH RELATED PRODUCTS
   useEffect(() => {
     const fetchRelated = async () => {
       if (!product?.mukhi) return;
       try {
-        const res = await fetch(`http://localhost:5000/api/products?mukhi=${product.mukhi}`);
+        const res = await fetch(
+          `http://localhost:5000/api/products?mukhi=${product.mukhi}`
+        );
         const data = await res.json();
-        setRelatedProducts(data.filter((p) => p._id !== product._id).slice(0, 3));
+        setRelatedProducts(
+          data.filter((p) => p._id !== product._id).slice(0, 3)
+        );
       } catch (err) {
         console.error(err);
       }
@@ -55,15 +70,19 @@ const ProductDetailPage = () => {
   }, [product]);
 
   if (isLoading) return <LoadingSpinner />;
+
   if (!product)
     return (
       <div className="product-not-found">
         <h2>Product not found</h2>
-        <Link to="/products" className="primary-btn">Back to Products</Link>
+        <Link to="/products" className="primary-btn">
+          Back to Products
+        </Link>
       </div>
     );
 
   const isInWishlist = wishlist?.some((item) => item._id === product._id);
+
   const handleWishlistToggle = () => {
     if (isInWishlist) removeFromWishlist(product._id);
     else addToWishlist(product);
@@ -89,7 +108,9 @@ const ProductDetailPage = () => {
                   <button
                     key={i}
                     onClick={() => setSelectedImage(i)}
-                    className={`thumb-btn ${selectedImage === i ? 'active' : ''}`}
+                    className={`thumb-btn ${
+                      selectedImage === i ? 'active' : ''
+                    }`}
                   >
                     <img src={getImageSrc(img)} alt="" />
                   </button>
@@ -104,9 +125,14 @@ const ProductDetailPage = () => {
 
             <div className="rating-row">
               {[...Array(5)].map((_, i) => (
-                <Star key={i} className={`star ${i < (product.rating || 0) ? 'filled' : ''}`} />
+                <Star
+                  key={i}
+                  className={`star ${i < (product.rating || 0) ? 'filled' : ''}`}
+                />
               ))}
-              <span className="reviews-count">({product.reviews || 0} reviews)</span>
+              <span className="reviews-count">
+                ({product.reviews || 0} reviews)
+              </span>
             </div>
 
             <div className="price-section">
@@ -135,16 +161,21 @@ const ProductDetailPage = () => {
                   product.stock > 10 ? 'in-stock' : 'low-stock'
                 }`}
               >
-                {product.stock > 10 ? 'In Stock' : `Only ${product.stock} left`}
+                {product.stock > 10
+                  ? 'In Stock'
+                  : `Only ${product.stock} left`}
               </span>
             </div>
 
+            {/* ACTION ROW */}
             <div className="actions-row">
               <div className="quantity-box">
                 <button onClick={() => setQuantity(Math.max(1, quantity - 1))}>
                   <Minus />
                 </button>
+
                 <span>{quantity}</span>
+
                 <button onClick={() => setQuantity(quantity + 1)}>
                   <Plus />
                 </button>
