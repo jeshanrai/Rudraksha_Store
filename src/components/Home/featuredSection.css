@@ -1,0 +1,243 @@
+.featured-section {
+  padding: 60px 0;
+  background: #f5f5f5;
+}
+
+.section-title {
+  font-size: 2rem;
+  text-align: center;
+  margin-bottom: 40px;
+  font-weight: 700;
+  color: #111;
+}
+
+.slider-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.products-slider {
+  display: flex;
+  gap: 1.5rem;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  padding: 10px;
+  scrollbar-width: none;
+}
+
+.products-slider::-webkit-scrollbar {
+  display: none;
+}
+
+.slider-card {
+  flex: 0 0 320px;
+  display: flex;
+  justify-content: center;
+}
+
+.modern-card {
+  background: #fff;
+  border-radius: 16px;
+  overflow: hidden;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+
+.image-container-modern {
+  position: relative;
+  width: 100%;
+  height: 240px;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.image-container-modern:nth-child(1) {
+  background: #fff;
+}
+
+.image-container-modern img {
+  width: 80%;
+  height: auto;
+  object-fit: contain;
+  transition: transform 0.3s ease;
+}
+
+
+
+.discount-badge-modern {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: #ff5a5f;
+  color: #fff;
+  font-size: 12px;
+  padding: 5px 8px;
+  border-radius: 6px;
+  font-weight: 600;
+}
+
+.eye-button-modern {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  background: rgba(255, 255, 255, 0.85);
+  border-radius: 50%;
+  padding: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #111;
+  transition: background 0.3s;
+}
+
+.eye-button-modern:hover {
+  background: #fff;
+}
+
+.discount-badge-modern {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: linear-gradient(135deg, #ff6b6b, #d90429);
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.85rem;
+  padding: 4px 10px;
+  border-radius: 20px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  z-index: 4;
+}
+
+.product-info-modern {
+  padding: 16px;
+  background: #e8e8e8;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin: 10px 10px 10px 10px;
+}
+
+.product-name-modern {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 4px;
+  color: #111;
+}
+
+/* ✅ Stock availability styling */
+.availability {
+  font-weight: 600;
+  font-size: 0.95rem;
+  margin-top: 6px;
+  background-color: none;
+}
+
+.in-stock {
+  color: #16a34a !important;
+background: transparent !important;
+  font-weight: bold;
+  width: fit-content;
+}
+
+.out-of-stock {
+  color: #dc2626; /* Tailwind red-600 shade */
+  font-weight: bold;
+}
+
+
+.price-row-modern {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.product-price {
+  font-size: 1rem;
+  font-weight: 700;
+  color:#16a34a !important;
+}
+
+.old-price-modern {
+  font-size: 0.9rem;
+  text-decoration: line-through;
+}
+
+.slider-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 5;
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+  transition: background 0.2s;
+}
+
+.slider-arrow:hover {
+  background: #fff;
+}
+
+.slider-arrow.left {
+  left: 10px;
+}
+
+.slider-arrow.right {
+  right: 10px;
+}
+
+/* Gradient text effect (used in title) */
+.gradient-text {
+  background: linear-gradient(90deg, #b85c00, #ff9d00);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Button styling */
+.primary-btn.luxury-btn {
+  display: inline-block;
+  background:linear-gradient(90deg, #b85c00, #ff9d00);
+  color: #fff;
+  border: none;
+  border-radius: 16px;
+  padding: 12px 24px;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.primary-btn.luxury-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(100, 149, 237, 0.4);
+}
+
+/* Skeleton loading */
+.skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e4e4e4 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 16px;
+  height: 340px;
+  width: 320px;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}

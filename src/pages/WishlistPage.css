@@ -7,6 +7,7 @@
   color: #333;
 }
 
+
 /* ===== Header ===== */
 .wishlist-header {
   display: flex;
@@ -155,6 +156,7 @@
 /* ===== Empty State ===== */
 .wishlist-empty {
   text-align: center;
+  margin-top: 10rem;
   padding: 100px 20px;
 }
 

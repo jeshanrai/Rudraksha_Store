@@ -6,11 +6,12 @@ import './Header.css';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { user, cart, searchTerm, setSearchTerm } = useApp();
+  const { user, cart, wishlist, searchTerm, setSearchTerm } = useApp();
   const navigate = useNavigate();
   const location = useLocation();
 
   const cartItemsCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+  const wishlistCount = wishlist?.length || 0; // ✅ wishlist item count
 
   const handleSearch = (e) => {
     if (e.key === 'Enter' && searchTerm.trim()) {
@@ -74,10 +75,15 @@ const Header = () => {
             />
           </div>
 
+          {/* ✅ Wishlist with count badge */}
           <Link to="/wishlist" className="icon-btn" aria-label="Wishlist">
             <Heart className="icon" />
+            {wishlistCount > 0 && (
+              <span className="cart-badge">{wishlistCount}</span>
+            )}
           </Link>
 
+          {/* Cart with count badge */}
           <Link to="/cart" className="icon-btn-cart-btn" aria-label="Shopping cart">
             <ShoppingCart className="icon" />
             {cartItemsCount > 0 && (

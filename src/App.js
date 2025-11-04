@@ -60,7 +60,8 @@ const hideFooter =
   path.startsWith("/admin") ||
   path.startsWith("/mukhi") ||
   path.startsWith("/products") ||
-  path.startsWith("/product");
+  path.startsWith("/product") ||
+  path.startsWith("/wishlist");
 
   
 

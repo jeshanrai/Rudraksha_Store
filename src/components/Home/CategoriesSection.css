@@ -1,0 +1,79 @@
+.categories-section {
+  padding: 50px 0;
+  background-color: #f5f5f5 !important;
+}
+
+.categories-carousel {
+  display: flex;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  gap: 20px;
+  height: 360px; /* ⬆️ Increased height */
+  align-items: center;
+  padding-bottom: 10px;
+}
+
+.mukhi-card {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  min-width: 230px;
+  height: 320px; /* ⬆️ Taller card */
+  text-align: center;
+  transition: transform 0.3s ease;
+  cursor: pointer;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.mukhi-card:hover {
+  transform: translateY(-5px);
+}
+
+.mukhi-image-wrapper {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.mukhi-img {
+  height: 140px;
+  object-fit: contain;
+}
+
+.mukhi-info {
+  margin-top: 10px;
+}
+
+.mukhi-name {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #222;
+}
+
+.mukhi-price {
+  color: #27ae60;
+  font-weight: bold;
+}
+
+.mukhi-discount {
+  color: #e74c3c;
+  font-size: 0.9rem;
+}
+
+.view-btn {
+  margin-top: 8px;
+  background: #f4f4f4;
+  border: none;
+  border-radius: 50%;
+  padding: 8px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.view-btn:hover {
+  background: #ddd;
+}

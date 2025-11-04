@@ -3,7 +3,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Heart, Star, Eye, ShoppingCart } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import './ProductCard.css';
-
 const ProductCard = ({ product, viewMode = 'grid' }) => {
   const { addToCart, wishlist, addToWishlist, removeFromWishlist } = useApp();
   const navigate = useNavigate();
@@ -77,14 +76,16 @@ const ProductCard = ({ product, viewMode = 'grid' }) => {
         </div>
 
         <div className="modern-actions">
-          <Link
-            to={`/product/${product._id}`}
-            state={{ product }}
-            className="icon-btn"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <Eye />
-          </Link>
+         <Link
+  onClick={(e) => {
+    e.preventDefault();
+    navigate(`/product/${product._id || product.id}`, { state: { product } });
+  }}
+  className="eye-button-modern"
+  title="View Product"
+>
+  <Eye size={18} />
+</Link>
 
           <button
             className="cart-btn"
