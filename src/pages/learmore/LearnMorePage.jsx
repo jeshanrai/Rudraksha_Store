@@ -11,15 +11,18 @@ const LearnMorePage = () => {
     <>
 
       <div className={`learn-more-container ${isVisible ? 'fade-in' : ''}`}>
-        {/* Header */}
-       <header className="page-header">
-  <div className="overlay"></div>
+    <header
+      className="page-header"
+      style={{ backgroundImage: "url('/images/learnmore0.png')" }}
+    >
+      <div className="overlay"></div>
+      <div className="header-content">
+        <h1>Understanding Rudraksha</h1>
+        <p className="subtitle">Ancient Sacred Beads with Divine Energy</p>
+      </div>
+    </header>
 
-  <div className="header-content">
-    <h1>Understanding Rudraksha</h1>
-    <p className="subtitle">Ancient Sacred Beads with Divine Energy</p>
-  </div>
-</header>
+
 
 
         {/* Section 1: What is Rudraksha */}
