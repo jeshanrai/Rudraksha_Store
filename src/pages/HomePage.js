@@ -71,10 +71,10 @@ const HomePage = () => {
       <FeaturedSection featuredProducts={featuredProducts} />
       <TestimonialsSection />
 
+      <FaqSection />
       {/* ✅ Newsletter with Notification trigger */}
       <NewsletterSection showNotification={showNotification} />
 
-      <FaqSection />
 
       <div id="about">
         <About />

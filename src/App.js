@@ -26,6 +26,7 @@ const LoginPage = lazy(() => import("./pages/LoginPage"));
 const RegisterPage = lazy(() => import("./pages/RegisterPage"));
 const ProfilePage = lazy(() => import("./pages/ProfilePage"));
 const NotFoundPage = lazy(() => import("./pages/NotFoundPage"));
+const LearnMorePage = lazy(() => import("./pages/learmore/LearnMorePage"));
 
 // ✅ Mukhi-related pages
 const CategoriesSection = lazy(() =>
@@ -61,7 +62,8 @@ const hideFooter =
   path.startsWith("/mukhi") ||
   path.startsWith("/products") ||
   path.startsWith("/product") ||
-  path.startsWith("/wishlist");
+  path.startsWith("/wishlist") ||
+  path.startsWith("/learn-more");
 
   
 
@@ -97,6 +99,7 @@ function App() {
                 <Route path="/products" element={<ProductsPage />} />
                 <Route path="/product/:id" element={<ProductDetailPage />} />
                 <Route path="/wishlist" element={<WishlistPage />} />
+                <Route path="/learn-more" element={<LearnMorePage />} />
 
                 {/* ✅ Mukhi Routes */}
                 <Route path="/mukhi" element={<CategoriesSection />} />

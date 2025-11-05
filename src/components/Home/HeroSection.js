@@ -20,9 +20,9 @@ const HeroSection = () => (
             <Link to="/products" className="primary-btn">
               Shop Collection
             </Link>
-            <button className="secondary-btn">
+           <Link to="/learn-more" className="secondary-btn">
               Learn More
-            </button>
+            </Link>
           </div>
         </div>
         <div className="hero-image">
