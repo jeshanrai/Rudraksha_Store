@@ -86,49 +86,95 @@ const LearnMorePage = () => {
             <div className="origin-card">
               <div className="image-placeholder small-image">
                 <img 
-                  src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&q=80" 
+                  src="/images/20mukhi.png" 
                   alt="Nepal Himalayan forest"
                 />
               </div>
               <h3>Nepal</h3>
               <p>Most powerful, rare, deeper lines, high energy</p>
-              <p className="image-prompt small">
-                <strong>Prompt:</strong> "Himalayan forest with Rudraksha trees, morning light, mystical atmosphere."
-              </p>
+             
             </div>
 
             <div className="origin-card">
               <div className="image-placeholder small-image">
                 <img 
-                  src="https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=400&q=80" 
+                  src="/images/indo.png" 
                   alt="Indonesian tropical forest"
                 />
               </div>
               <h3>Indonesia</h3>
               <p>Small size, smooth surface, affordable, comfortable</p>
-              <p className="image-prompt small">
-                <strong>Prompt:</strong> "Tropical Indonesian forest with Rudraksha tree imagery, soft ambient light."
-              </p>
             </div>
 
             <div className="origin-card">
               <div className="image-placeholder small-image">
                 <img 
-                  src="https://images.unsplash.com/photo-1563630423918-b58f07336ac1?w=400&q=80" 
+                  src="/images/india.png" 
                   alt="Indian forest landscape"
                 />
               </div>
               <h3>India</h3>
               <p>Limited production, mostly for malas</p>
-              <p className="image-prompt small">
-                <strong>Prompt:</strong> "Rudraksha tree representation in Meghalaya/Haridwar forest style, natural warm colors."
-              </p>
             </div>
           </div>
-          <p className="highlight-text">Nepali Rudraksha is the most energetic.</p>
+          <p className="highlight-text">Nepali Rudraksha carries the highest vibration, radiating purity, protection, and inner awakening.</p>
+
         </section>
 
-        {/* Section 4: Identifying Genuine Rudraksha */}
+
+        <section className="section origin-section glass-effect">
+  <h2 className="section-title">Origin of Our Rudraksha</h2>
+
+  <div className="content-wrapper reverse-layout">
+   <div className="text-content">
+  <p className="origin-desc">
+    Our Rudraksha beads come from the sacred
+    <span className="highlight"> Arun Valley region of Eastern Nepal</span>
+    one of the deepest, purest, and most spiritually awakened valleys on earth.
+    Surrounded by untouched Himalayan forests, flowing crystalclear rivers,
+    and naturally magnetic soil, the Arun region produces Rudraksha with
+    exceptional vibration, clarity, and authenticity.
+  </p>
+
+  <p className="origin-desc">
+    Every bead is nurtured in a high-energy environment where the air is fresh,
+    the altitude is ideal, and the trees grow in complete natural harmony.
+    This unique geography allows the Rudraksha to develop strong mukhi lines,
+    balanced density, and powerful spiritual resonance, making them highly
+    cherished by seekers, meditators, and energy practitioners worldwide.
+  </p>
+
+  <ul className="origin-benefits">
+    <li>Handpicked from naturally grown, decades-old Rudraksha trees</li>
+    <li>Zero chemical polishing—100% natural surface and energy</li>
+    <li>Sorted, graded, and cleaned by experienced Himalayan farmers</li>
+    <li>Ethically sourced with complete transparency and purity</li>
+    <li>High-vibration beads known for stability, protection, and spiritual clarity</li>
+    <li>Direct farm-to-user deliveryensuring untouched authenticity</li>
+  </ul>
+</div>
+
+
+    <div className="video-container">
+      <div className="video-wrapper">
+   <video
+  className="origin-video"
+  src="/video/91f34ab1-3c92-4689-8ab1-5bc2bad19c4f.mp4"
+  preload="metadata"
+  poster="/images/arun-poster.jpg"
+  loop
+  autoPlay
+  muted
+  playsInline
+></video>
+
+
+      </div>
+    </div>
+  </div>
+</section>
+
+        {/* Section 5: Identifying Genuine Rudraksha */}
         <section className="section glass-effect">
           <h2 className="section-title">Identifying a Genuine Rudraksha</h2>
           <div className="content-wrapper">
@@ -144,16 +190,16 @@ const LearnMorePage = () => {
             <div className="image-container">
               <div className="image-placeholder">
                 <img 
-                  src="/images/learnmore0.png" 
+                  src="/images/fakereal.png" 
                   alt="Genuine vs fake Rudraksha comparison"
                 />
               </div>
-              <p className="image-prompt">
-                <strong>Image Prompt:</strong> "Real vs fake Rudraksha comparison, natural texture vs carved lines, clean neutral background."
-              </p>
+              
             </div>
           </div>
         </section>
+
+
 
         {/* Footer */}
         <footer className="page-footer">

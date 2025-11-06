@@ -8,6 +8,7 @@ import {
 } from "react-router-dom";
 import { AppProvider } from "./context/AppContext";
 import { AuthProvider, useAuth } from "./context/AuthContext";
+import { useApp } from "./context/AppContext";   // ✅ ADDED
 import ProtectedRoute from "./components/ProtectedRoute";
 import Header from "./components/Header/Header";
 import Footer from "./components/Footer/Footer";
@@ -54,18 +55,20 @@ const OrderManagement = lazy(() =>
 // ✅ Layout wrapper for conditional header/footer
 const LayoutWrapper = ({ children }) => {
   const { user } = useAuth();
+  const { isLoading } = useApp(); // ✅ ADDED
   const location = useLocation();
 
   const path = location.pathname;
-const hideFooter =
-  path.startsWith("/admin") ||
-  path.startsWith("/mukhi") ||
-  path.startsWith("/products") ||
-  path.startsWith("/product") ||
-  path.startsWith("/wishlist") ||
-  path.startsWith("/learn-more");
 
-  
+  // ✅ FIX: Hide footer during homepage loading
+  const hideFooter =
+    (isLoading && path === "/") ||  // ✅ ADDED FIX
+    path.startsWith("/admin") ||
+    path.startsWith("/mukhi") ||
+    path.startsWith("/products") ||
+    path.startsWith("/product") ||
+    path.startsWith("/wishlist") ||
+    path.startsWith("/learn-more");
 
   return (
     <>
@@ -74,14 +77,11 @@ const hideFooter =
 
       {children}
 
-      {/* ✅ Hide footer on mukhi and admin routes */}
+      {/* ✅ Hide footer on mukhi, admin, AND homepage loading */}
       {!hideFooter && <Footer />}
     </>
   );
 };
-
-
-
 
 function App() {
   return (
@@ -131,7 +131,7 @@ function App() {
                   }
                 />
 
-                {/* ✅ Admin Routes with Protected Layout */}
+                {/* ✅ Admin Routes */}
                 <Route
                   path="/admin"
                   element={

@@ -84,22 +84,23 @@ export function AppProvider({ children }) {
     setWishlist([]);
   };
 
-  // Load products (mock or API)
   useEffect(() => {
-    const loadProducts = async () => {
-      dispatch({ type: 'SET_LOADING', payload: true });
-      try {
-        await new Promise((resolve) => setTimeout(resolve, 500));
-        dispatch({ type: 'SET_PRODUCTS', payload: mockProducts });
-      } catch (error) {
-        console.error('Failed to load products:', error);
-      } finally {
-        dispatch({ type: 'SET_LOADING', payload: false });
-      }
-    };
+  const loadProducts = async () => {
+    dispatch({ type: 'SET_LOADING', payload: true });
 
-    loadProducts();
-  }, []);
+    try {
+      await new Promise(resolve => setTimeout(resolve, 1200)); 
+      dispatch({ type: 'SET_PRODUCTS', payload: mockProducts });
+    } finally {
+      setTimeout(() => {
+        dispatch({ type: 'SET_LOADING', payload: false });
+      }, 300); 
+    }
+  };
+
+  loadProducts();
+}, []);
+
 
   // ✅ Context value including cart
   const value = {

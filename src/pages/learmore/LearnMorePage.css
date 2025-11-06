@@ -428,3 +428,15 @@
             font-size: 1.1rem;
           }
         }
+
+        /* Reverse layout -> left text, right video */
+.reverse-layout {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 40px;
+}
+.origin-video{
+  border-radius: 20px;
+
+}

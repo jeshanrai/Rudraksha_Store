@@ -4,6 +4,8 @@ import { useApp } from '../context/AppContext';
 
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import HeroSection from '../components/Home/HeroSection';
+import HeroSkeleton from '../components/skeleton/HeroSkeleton';
+
 import CategoriesSection from '../components/Home/CategoriesSection';
 import FeaturedSection from '../components/Home/FeaturedSection';
 import TestimonialsSection from '../components/Home/TestimonialsSection';
@@ -14,6 +16,7 @@ import FeaturesSection from '../components/Home/FeaturesSection';
 import NewsletterSection from '../components/Home/NewsletterSection';
 
 import Notification from '../components/Notification';
+import './homepage.css';
 
 const HomePage = () => {
   const { products, isLoading } = useApp();
@@ -28,12 +31,12 @@ const HomePage = () => {
     visible: false,
   });
 
-  // ✅ Trigger Notification Function
+  // ✅ Trigger Notification
   const showNotification = (message, type = "success") => {
     setNotification({ message, type, visible: true });
   };
 
-  // ✅ Close Notification Function
+  // ✅ Close Notification
   const closeNotification = () => {
     setNotification(prev => ({ ...prev, visible: false }));
   };
@@ -50,10 +53,6 @@ const HomePage = () => {
     }
   }, [location]);
 
-  if (isLoading) {
-    return <LoadingSpinner />;
-  }
-
   return (
     <div>
       {/* ✅ Global Notification */}
@@ -65,21 +64,28 @@ const HomePage = () => {
         />
       )}
 
-      <HeroSection />
-      <CategoriesSection />
-      <BodySection />
-      <FeaturedSection featuredProducts={featuredProducts} />
-      <TestimonialsSection />
+      {/* ✅ Show skeleton + spinner overlay when loading */}
+      {isLoading ? (
+        <div className="loading-wrapper">
+          <HeroSkeleton /> 
+          <LoadingSpinner />
+        </div>
+      ) : (
+        <>
+          <HeroSection />
+          <CategoriesSection />
+          <BodySection />
+          <FeaturedSection featuredProducts={featuredProducts} />
+          <TestimonialsSection />
+          <FaqSection />
+          <NewsletterSection showNotification={showNotification} />
 
-      <FaqSection />
-      {/* ✅ Newsletter with Notification trigger */}
-      <NewsletterSection showNotification={showNotification} />
-
-
-      <div id="about">
-        <About />
-        <FeaturesSection />
-      </div>
+          <div id="about">
+            <About />
+            <FeaturesSection />
+          </div>
+        </>
+      )}
     </div>
   );
 };
