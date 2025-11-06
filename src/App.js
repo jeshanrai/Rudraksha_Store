@@ -16,6 +16,7 @@ import LoadingSpinner from "./components/common/LoadingSpinner";
 import About from "./pages/About";
 import WishlistPage from "./pages/WishlistPage";
 import "./styles.css";
+import { loadStripe } from "@stripe/stripe-js";
 
 // ✅ Lazy load user pages
 const HomePage = lazy(() => import("./pages/HomePage"));
@@ -51,7 +52,7 @@ const SalesManagement = lazy(() =>
 const OrderManagement = lazy(() =>
   import("./pages/admin/OrderManagement")
 );
-
+export const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLIC_KEY);
 // ✅ Layout wrapper for conditional header/footer
 const LayoutWrapper = ({ children }) => {
   const { user } = useAuth();
@@ -68,7 +69,8 @@ const LayoutWrapper = ({ children }) => {
     path.startsWith("/products") ||
     path.startsWith("/product") ||
     path.startsWith("/wishlist") ||
-    path.startsWith("/learn-more");
+    path.startsWith("/learn-more") ||
+    path.startsWith("/checkout");
 
   return (
     <>

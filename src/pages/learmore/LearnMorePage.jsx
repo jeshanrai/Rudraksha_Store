@@ -8,8 +8,8 @@ const LearnMorePage = () => {
   }, []);
 
   return (
-    <>
-
+    <div>
+      <div className="learnmoreBody">
       <div className={`learn-more-container ${isVisible ? 'fade-in' : ''}`}>
     <header
       className="page-header"
@@ -27,7 +27,7 @@ const LearnMorePage = () => {
 
         {/* Section 1: What is Rudraksha */}
         <section className="section glass-effect">
-          <h2 className="section-title">What is Rudraksha?</h2>
+          <h2 className="section-title-learn">What is Rudraksha?</h2>
           <div className="content-wrapper">
             <div className="text-content">
               <p>
@@ -49,7 +49,7 @@ const LearnMorePage = () => {
 
         {/* Section 2: How to Count Mukhis */}
         <section className="section glass-effect">
-          <h2 className="section-title">How to Count Mukhis (Faces)</h2>
+          <h2 className="section-title-learn">How to Count Mukhis (Faces)</h2>
           <div className="content-grid">
             <div className="text-content">
               <ul className="mukhi-list">
@@ -81,7 +81,7 @@ const LearnMorePage = () => {
 
         {/* Section 3: Origin of Rudraksha */}
         <section className="section glass-effect">
-          <h2 className="section-title">Origin of Rudraksha</h2>
+          <h2 className="section-title-learn">Origin of Rudraksha</h2>
           <div className="origin-grid">
             <div className="origin-card">
               <div className="image-placeholder small-image">
@@ -123,7 +123,7 @@ const LearnMorePage = () => {
 
 
         <section className="section origin-section glass-effect">
-  <h2 className="section-title">Origin of Our Rudraksha</h2>
+  <h2 className="section-title-learn">Origin of Our Rudraksha</h2>
 
   <div className="content-wrapper reverse-layout">
    <div className="text-content">
@@ -176,7 +176,7 @@ const LearnMorePage = () => {
 
         {/* Section 5: Identifying Genuine Rudraksha */}
         <section className="section glass-effect">
-          <h2 className="section-title">Identifying a Genuine Rudraksha</h2>
+          <h2 className="section-title-learn">Identifying a Genuine Rudraksha</h2>
           <div className="content-wrapper">
             <div className="text-content">
               <ul className="authenticity-list">
@@ -206,7 +206,8 @@ const LearnMorePage = () => {
           <p>© 2025 Rudraksha Knowledge Center. All rights reserved.</p>
         </footer>
       </div>
-    </>
+    </div>
+    </div>
   );
 };
 

@@ -9,8 +9,11 @@ const authRoutes = require('./routes/auth');
 const adminRoutes = require('./routes/admin');
 const productRoutes = require('./routes/productRoutes');
 const orderRoutes = require('./routes/orderRoutes'); // ✅ new route
+const paymentRoutes = require('./routes/paymentRoutes');
 
 const app = express();
+
+
 
 // ===== Middleware =====
 app.use(cors());
@@ -26,6 +29,7 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/rudraksha
 .catch(err => console.error('❌ MongoDB connection error:', err));
 
 // ===== API Routes =====
+app.use("/api/payment", paymentRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/products', productRoutes);
