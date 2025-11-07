@@ -197,3 +197,113 @@
     flex-direction: column;
   }
 }
+
+
+.lpgp-form-section-title {
+  font-size: 1.6rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+.lpgp-payment-options {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.lpgp-payment-option {
+  flex: 1 1 220px;
+  cursor: pointer;
+}
+
+.lpgp-payment-option input[type="radio"] {
+  display: none;
+}
+
+.lpgp-payment-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  border: 2px solid #ddd;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  background-color: #fff;
+}
+
+.lpgp-payment-option:hover .lpgp-payment-card,
+.lpgp-payment-option input:checked + .lpgp-payment-card {
+  border-color: #4f46e5;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+  background-color: #f5f5ff;
+}
+
+.lpgp-payment-logo {
+  width: 60px; /* bigger logo */
+  height: 60px;
+  object-fit: contain;
+}
+
+.lpgp-payment-text {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #333;
+}
+
+.lpgp-stripe-form {
+  padding: 1.5rem 2rem; /* enough padding around card input */
+  border: 2px solid #ddd;
+  border-radius: 12px;
+  background-color: #fff;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem; /* spacing between card input and pay button */
+}
+
+.lpgp-stripe-form .StripeElement {
+  padding: 14px 12px !important; /* internal padding for Stripe input */
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  background-color: #f9f9f9;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Optional: Pay button inside stripe form */
+.lpgp-stripe-form button {
+  padding: 0.8rem 2rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #fff;
+  margin-top: 10px;
+  background-color: #4f46e5;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.lpgp-stripe-form button:hover {
+  background-color: #3730a3;
+  transform: translateY(-2px);
+}
+
+.lpgp-place-order-btn {
+  margin-top: 1rem;
+  padding: 0.8rem 2rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #fff;
+  background-color: #4f46e5;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.lpgp-place-order-btn:hover {
+  background-color: #3730a3;
+  transform: translateY(-2px);
+}

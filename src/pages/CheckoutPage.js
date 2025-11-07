@@ -22,29 +22,45 @@ const StripePaymentForm = ({ finalTotal, onSuccess }) => {
   const handleStripePayment = async () => {
     setLoading(true);
 
-    // ✅ 1. Create PaymentIntent (backend)
-    const res = await fetch("http://localhost:5000/api/payment/create-payment-intent", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ amount: finalTotal }),
-    });
+    try {
+      // ✅ 1. Create PaymentIntent (backend)
+      const res = await fetch("http://localhost:5000/api/payment/create-payment-intent", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ amount: finalTotal }),
+      });
 
-    const { clientSecret } = await res.json();
+      const data = await res.json();
+      if (!res.ok || !data.clientSecret) {
+        alert(data.error || "Failed to create PaymentIntent");
+        setLoading(false);
+        return;
+      }
 
-    // ✅ 2. Confirm card payment
-    const result = await stripe.confirmCardPayment(clientSecret, {
-      payment_method: { card: elements.getElement(CardElement) },
-    });
+      const clientSecret = data.clientSecret;
 
-    if (result.error) {
-      alert(result.error.message);
-      setLoading(false);
-      return;
+      // ✅ 2. Confirm card payment
+      const card = elements.getElement(CardElement);
+      const result = await stripe.confirmCardPayment(clientSecret, {
+        payment_method: { card },
+      });
+
+      if (result.error) {
+        alert("Payment failed: " + result.error.message);
+        setLoading(false);
+        return;
+      }
+
+      if (result.paymentIntent.status === "succeeded") {
+        alert("✅ Payment successful!");
+        onSuccess(result.paymentIntent.id);
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Something went wrong during payment!");
     }
 
-    if (result.paymentIntent.status === "succeeded") {
-      onSuccess(result.paymentIntent.id);
-    }
+    setLoading(false);
   };
 
   return (
@@ -61,7 +77,6 @@ const StripePaymentForm = ({ finalTotal, onSuccess }) => {
     </div>
   );
 };
-
 
 // ✅ MAIN CHECKOUT PAGE
 const CheckoutPage = () => {
@@ -115,25 +130,30 @@ const CheckoutPage = () => {
       createdAt: new Date(),
     };
 
-    const res = await fetch("http://localhost:5000/api/orders", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token || localStorage.getItem("userToken")}`,
-      },
-      body: JSON.stringify(orderPayload),
-    });
+    try {
+      const res = await fetch("http://localhost:5000/api/orders", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token || localStorage.getItem("userToken")}`,
+        },
+        body: JSON.stringify(orderPayload),
+      });
 
-    const data = await res.json();
+      const data = await res.json();
 
-    if (!res.ok) {
-      alert(data.message || "Order failed");
-      return;
+      if (!res.ok) {
+        alert(data.message || "Order failed");
+        return;
+      }
+
+      alert("✅ Order placed successfully!");
+      setCart([]);
+      navigate("/");
+    } catch (err) {
+      console.error(err);
+      alert("Something went wrong while placing the order!");
     }
-
-    alert("✅ Order placed successfully!");
-    setCart([]);
-    navigate("/");
   };
 
   // ✅ COD (Normal form submit)
@@ -158,13 +178,9 @@ const CheckoutPage = () => {
   return (
     <div className="checkout-page">
       <div className="container">
-        <h1 className="page-title">Checkout</h1>
-
         <div className="checkout-layout">
-
           {/* ✅ LEFT SIDE — FORM */}
           <div className="checkout-form-container">
-
             <form
               onSubmit={checkoutData.paymentMethod === "cod" ? handleNormalOrder : undefined}
               className="checkout-form"
@@ -263,54 +279,64 @@ const CheckoutPage = () => {
               </div>
 
               {/* ✅ PAYMENT OPTIONS */}
-              <h3 className="form-section-title">Payment Method</h3>
+           <h3 className="lpgp-form-section-title">Payment Method</h3>
 
-              <div className="payment-options">
-                <label className="payment-option">
-                  <input
-                    type="radio"
-                    value="card"
-                    name="payment"
-                    checked={checkoutData.paymentMethod === "card"}
-                    onChange={(e) =>
-                      setCheckoutData({ ...checkoutData, paymentMethod: e.target.value })
-                    }
-                  />
-                  <img src="/img/payments/card.png" className="payment-logo" alt="" />
-                  Credit / Debit Card
-                </label>
+<div className="lpgp-payment-options">
+  {/* Credit/Debit Card Option */}
+  <label className="lpgp-payment-option">
+    <input
+      type="radio"
+      value="card"
+      name="payment"
+      checked={checkoutData.paymentMethod === "card"}
+      onChange={(e) =>
+        setCheckoutData({ ...checkoutData, paymentMethod: e.target.value })
+      }
+    />
+    <div className="lpgp-payment-card">
+      <img src="/images/credit.png" className="lpgp-payment-logo" alt="Card" />
+      <span className="lpgp-payment-text">Credit / Debit Card</span>
+    </div>
+  </label>
 
-                <label className="payment-option">
-                  <input
-                    type="radio"
-                    value="cod"
-                    name="payment"
-                    checked={checkoutData.paymentMethod === "cod"}
-                    onChange={(e) =>
-                      setCheckoutData({ ...checkoutData, paymentMethod: e.target.value })
-                    }
-                  />
-                  <img src="/img/payments/cod.png" className="payment-logo" alt="" />
-                  Cash on Delivery
-                </label>
-              </div>
+  {/* Cash on Delivery Option */}
+  <label className="lpgp-payment-option">
+    <input
+      type="radio"
+      value="cod"
+      name="payment"
+      checked={checkoutData.paymentMethod === "cod"}
+      onChange={(e) =>
+        setCheckoutData({ ...checkoutData, paymentMethod: e.target.value })
+      }
+    />
+    <div className="lpgp-payment-card">
+      <img src="/images/cash.png" className="lpgp-payment-logo" alt="COD" />
+      <span className="lpgp-payment-text">Cash on Delivery</span>
+    </div>
+  </label>
+</div>
 
-              {/* ✅ STRIPE PAYMENT DISPLAY (NO FORM INSIDE FORM) */}
-              {checkoutData.paymentMethod === "card" && (
-                <Elements stripe={stripePromise}>
-                  <StripePaymentForm
-                    finalTotal={finalTotal}
-                    onSuccess={(paymentId) => placeOrder(paymentId)}
-                  />
-                </Elements>
-              )}
+{/* Stripe Payment Form */}
+{checkoutData.paymentMethod === "card" && (
+  <div className="lpgp-stripe-form">
+    <Elements stripe={stripePromise}>
+      <StripePaymentForm
+        finalTotal={finalTotal}
+        onSuccess={(paymentId) => placeOrder(paymentId)}
+      />
+    </Elements>
+  </div>
+)}
 
-              {/* ✅ COD BUTTON */}
-              {checkoutData.paymentMethod === "cod" && (
-                <button type="submit" className="place-order-btn">
-                  Place Order
-                </button>
-              )}
+
+{/* COD Button */}
+{checkoutData.paymentMethod === "cod" && (
+  <button type="submit" className="lpgp-place-order-btn">
+    Place Order
+  </button>
+)}
+
             </form>
           </div>
 
