@@ -34,6 +34,8 @@ const Notification = ({
       >
         ×
       </button>
+
+      
     </div>
   );
 };
