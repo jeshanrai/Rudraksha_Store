@@ -1,15 +1,25 @@
 import React, { useEffect, useState } from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 import { User } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import Notification from '../components/Notification';
 import './ProfilePage.css';
 
 const ProfilePage = () => {
   const { user, logout } = useAuth();
+  const location = useLocation();
   const [activeTab, setActiveTab] = useState('profile');
   const [userData, setUserData] = useState(null);
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [notification, setNotification] = useState(null);
+
+  // ✅ Show notification if passed via navigate state
+  useEffect(() => {
+    if (location.state?.notification) {
+      setNotification(location.state.notification);
+    }
+  }, [location.state]);
 
   // ✅ Load user + orders from backend
   useEffect(() => {
@@ -54,6 +64,16 @@ const ProfilePage = () => {
   return (
     <div className="profile-page">
       <div className="container">
+
+        {/* ✅ Notification */}
+        {notification && (
+          <Notification
+            message={notification.message}
+            type={notification.type}
+            onClose={() => setNotification(null)}
+          />
+        )}
+
         <div className="profile-layout">
           
           {/* ✅ Sidebar */}
@@ -119,10 +139,9 @@ const ProfilePage = () => {
                             </p>
                           </div>
 
-                        <span className={`order-status ${(order.orderStatus || 'Pending').toLowerCase()}`}>
-  {order.orderStatus || 'Pending'}
-</span>
-
+                          <span className={`order-status ${(order.orderStatus || 'Pending').toLowerCase()}`}>
+                            {order.orderStatus || 'Pending'}
+                          </span>
                         </div>
 
                         <p className="order-items">

@@ -65,9 +65,15 @@ const StripePaymentForm = ({ finalTotal, checkoutData, cart, onSuccess }) => {
   return (
     <div className="stripe-form">
       <CardElement className="stripe-card-element" />
-      <button type="button" onClick={handlePay} className="pay-btn" disabled={!stripe || loading}>
-        {loading ? "Processing..." : `Pay ₹${finalTotal}`}
-      </button>
+      <button
+  type="button"
+  className="place-order-btn"
+  disabled={!stripe || loading || !isFormValid}
+  onClick={handleStripePayment}
+>
+  {loading ? "Processing..." : `Pay ₹${finalTotal}`}
+</button>
+
     </div>
   );
 };
