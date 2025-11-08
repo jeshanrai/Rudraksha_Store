@@ -8,36 +8,37 @@ import './ProfilePage.css';
 const ProfilePage = () => {
   const { user, logout } = useAuth();
   const location = useLocation();
-  const [activeTab, setActiveTab] = useState('profile');
+  const [activeTab, setActiveTab] = useState('orders'); // default to orders
   const [userData, setUserData] = useState(null);
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [notification, setNotification] = useState(null);
 
-  // ✅ Show notification if passed via navigate state
-  useEffect(() => {
-    if (location.state?.notification) {
-      setNotification(location.state.notification);
-    }
-  }, [location.state]);
+useEffect(() => {
+  if (location.state?.notification) {
+    setNotification(location.state.notification);
 
-  // ✅ Load user + orders from backend
+    // Clear the notification from history state so it doesn't persist on reload
+    window.history.replaceState({}, document.title);
+  }
+}, [location.state]);
+
   useEffect(() => {
     let mounted = true;
 
     const loadProfile = async () => {
       try {
-        // ✅ Load user from localStorage
+        // Load user from localStorage
         const stored = JSON.parse(localStorage.getItem('user') || 'null');
+        const token = localStorage.getItem('userToken');
+        if (!stored || !stored.id) return;
         if (mounted) setUserData(stored);
 
-        // ✅ Fetch user orders
-        const token = localStorage.getItem("token");
-
-        const res = await fetch('http://localhost:5000/api/orders/my-orders', {
+        // Fetch orders for this user with proper Authorization header
+        const res = await fetch(`http://localhost:5000/api/orders/my-orders?userId=${stored.id}`, {
           headers: {
-            Authorization: `Bearer ${token}`,
-          },
+            Authorization: token ? `Bearer ${token}` : ''
+          }
         });
 
         const data = await res.json();
@@ -56,7 +57,7 @@ const ProfilePage = () => {
     return () => (mounted = false);
   }, []);
 
-  // ✅ Redirect if not logged in
+  // Redirect if not logged in
   if (!user) return <Navigate to="/login" replace />;
 
   if (loading) return <div className="profile-page"><p>Loading...</p></div>;
@@ -65,7 +66,6 @@ const ProfilePage = () => {
     <div className="profile-page">
       <div className="container">
 
-        {/* ✅ Notification */}
         {notification && (
           <Notification
             message={notification.message}
@@ -75,8 +75,8 @@ const ProfilePage = () => {
         )}
 
         <div className="profile-layout">
-          
-          {/* ✅ Sidebar */}
+
+          {/* Sidebar */}
           <div className="profile-sidebar">
             <div className="profile-header">
               <div className="profile-avatar">
@@ -87,13 +87,6 @@ const ProfilePage = () => {
             </div>
 
             <div className="profile-menu">
-              <button
-                className={`menu-item ${activeTab === 'profile' ? 'active' : ''}`}
-                onClick={() => setActiveTab('profile')}
-              >
-                Profile
-              </button>
-
               <button
                 className={`menu-item ${activeTab === 'orders' ? 'active' : ''}`}
                 onClick={() => setActiveTab('orders')}
@@ -107,22 +100,9 @@ const ProfilePage = () => {
             </div>
           </div>
 
-          {/* ✅ Main Content */}
+          {/* Main Content */}
           <div className="profile-content">
-
-            {/* ✅ Profile Section */}
-            {activeTab === 'profile' && userData && (
-              <div className="profile-info-section">
-                <h3 className="section-title">My Profile</h3>
-                <p><strong>First Name:</strong> {userData.firstName}</p>
-                <p><strong>Last Name:</strong> {userData.lastName}</p>
-                <p><strong>Email:</strong> {userData.email}</p>
-                <p><strong>Phone:</strong> {userData.phone || 'N/A'}</p>
-                <p><strong>Joined:</strong> {new Date(userData.createdAt).toLocaleDateString()}</p>
-              </div>
-            )}
-
-            {/* ✅ Orders Section */}
+            {/* Orders Section */}
             {activeTab === 'orders' && (
               <div className="orders-section">
                 <h3 className="section-title">Order History</h3>
@@ -157,8 +137,8 @@ const ProfilePage = () => {
                 </div>
               </div>
             )}
-
           </div>
+
         </div>
       </div>
     </div>

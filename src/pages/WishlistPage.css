@@ -158,6 +158,7 @@
 .wishlist-empty {
   text-align: center;
   margin-top: 10rem;
+  min-height: 100vh;
   padding: 100px 20px;
 }
 

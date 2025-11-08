@@ -1,6 +1,6 @@
 .notification {
   position: fixed;
-  top: -100px; /* hidden initially */
+  margin-top: 50px;
   right: 20px;
   background-color: #28a745;
   color: #fff;

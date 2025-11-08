@@ -4,7 +4,7 @@ import { Heart, Eye, ShoppingCart } from "lucide-react";
 import { useApp } from "../../context/AppContext";
 import "./ProductCard.css";
 
-const ProductCard = ({ product, viewMode = "grid" }) => {
+const ProductCard = ({ product, viewMode = "grid", onAddToCart, onAddToWishlist }) => {
   const { addToCart, wishlist, addToWishlist, removeFromWishlist } = useApp();
   const navigate = useNavigate();
 
@@ -29,8 +29,22 @@ const ProductCard = ({ product, viewMode = "grid" }) => {
 
   const toggleWishlist = (e) => {
     e.stopPropagation();
-    if (isInWishlist) removeFromWishlist(product._id);
-    else addToWishlist(product);
+
+    if (isInWishlist) {
+      removeFromWishlist(product._id);
+      if (onAddToWishlist) onAddToWishlist(false, product); // removed
+    } else {
+      addToWishlist(product);
+      if (onAddToWishlist) onAddToWishlist(true, product); // added
+    }
+  };
+
+  const handleAddToCart = (e) => {
+    e.stopPropagation();
+    if (product.stock === 0) return;
+
+    addToCart(product);
+    if (onAddToCart) onAddToCart(product);
   };
 
   const openProduct = () => {
@@ -74,9 +88,7 @@ const ProductCard = ({ product, viewMode = "grid" }) => {
 
         <div className="modern-price-section">
           <span className="price">₹{discountedPrice}</span>
-          {discountRate > 0 && (
-            <span className="old-price">₹{originalPrice}</span>
-          )}
+          {discountRate > 0 && <span className="old-price">₹{originalPrice}</span>}
         </div>
 
         <div className="modern-actions enhanced-actions">
@@ -92,10 +104,7 @@ const ProductCard = ({ product, viewMode = "grid" }) => {
 
           <button
             className="cart-btn enhanced-cart"
-            onClick={(e) => {
-              e.stopPropagation();
-              addToCart(product);
-            }}
+            onClick={handleAddToCart}
             disabled={product.stock === 0}
           >
             <ShoppingCart className="cart-icon" />

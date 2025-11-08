@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Filter, Grid, List } from 'lucide-react';
 import ProductCard from '../components/ProductCard/ProductCard';
+import Notification from '../components/Notification';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 
 const ProductsPage = () => {
@@ -18,6 +19,7 @@ const ProductsPage = () => {
   const [filters, setFilters] = useState({ mukhi: [] });
   const [sortBy, setSortBy] = useState('featured');
 
+const [notification, setNotification] = useState(null);
   const location = useLocation();
 
   // ✅ Read mukhi from query param (e.g., /products?mukhi=5)
@@ -215,6 +217,15 @@ const ProductsPage = () => {
               Clear All Filters
             </button>
           </aside>
+          {/* Notification */}
+{notification && (
+  <Notification
+    message={notification.message}
+    type={notification.type}
+    onClose={() => setNotification(null)}
+  />
+)}
+
 
           {/* PRODUCTS SECTION */}
           <section className="products-grid-container">
@@ -234,15 +245,25 @@ const ProductsPage = () => {
                 }`}
               >
                 {filteredProducts.map((product) => (
-                  <ProductCard
-                    key={product._id}
-                    product={product}
-                    viewMode={viewMode}
-                  />
+                 <ProductCard
+  product={product}
+  viewMode={viewMode}
+  onAddToCart={(p) => setNotification({ message: `${p.name} added to cart!`, type: 'success' })}
+  onAddToWishlist={(added, p) =>
+    setNotification({
+      message: added
+        ? `${p.name} added to wishlist!`
+        : `${p.name} removed from wishlist!`,
+      type: added ? 'success' : 'error'
+    })
+  }
+/>
+
                 ))}
               </div>
             )}
           </section>
+          
         </div>
       </div>
     </div>

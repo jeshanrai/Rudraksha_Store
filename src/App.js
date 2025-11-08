@@ -53,34 +53,25 @@ const OrderManagement = lazy(() =>
   import("./pages/admin/OrderManagement")
 );
 export const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLIC_KEY);
-// ✅ Layout wrapper for conditional header/footer
-const LayoutWrapper = ({ children }) => {
-  const { user } = useAuth();
-  const { isLoading } = useApp(); // ✅ ADDED
-  const location = useLocation();
 
+const LayoutWrapper = ({ children }) => {
+  const location = useLocation();
   const path = location.pathname;
 
-  // ✅ FIX: Hide footer during homepage loading
-  const hideFooter =
-    (isLoading && path === "/") ||  // ✅ ADDED FIX
-    path.startsWith("/admin") ||
-    path.startsWith("/mukhi") ||
-    path.startsWith("/products") ||
-    path.startsWith("/product") ||
-    path.startsWith("/wishlist") ||
-    path.startsWith("/learn-more") ||
-    path.startsWith("/checkout");
+  // ✅ Footer only on homepage
+  const showFooter = path === "/";
+
 
   return (
+  
     <>
-      {/* ✅ Keep the header always visible (except admin) */}
+      {/* Header visible on all except admin */}
       {!path.startsWith("/admin") && <Header />}
 
       {children}
 
-      {/* ✅ Hide footer on mukhi, admin, AND homepage loading */}
-      {!hideFooter && <Footer />}
+      {/* Footer only on homepage */}
+      {showFooter && <Footer />}
     </>
   );
 };

@@ -363,7 +363,7 @@ const validateForm = () => {
     className="lpgp-place-order-btn"
     onClick={() => {
       if (!validateForm()) return;
-      setStep(2); // ✅ now show Payment Section
+      setStep(2);
     }}
   >
     Proceed to Payment

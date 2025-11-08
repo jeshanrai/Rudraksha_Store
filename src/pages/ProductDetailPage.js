@@ -4,6 +4,7 @@ import { Star, Heart, Plus, Minus } from 'lucide-react';
 import ProductCard from '../components/ProductCard/ProductCard';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import { useApp } from '../context/AppContext';
+import Notification from '../components/Notification';
 import './ProductDetailPage.css';
 
 const ProductDetailPage = () => {
@@ -14,6 +15,8 @@ const ProductDetailPage = () => {
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [isLoading, setIsLoading] = useState(!product);
+  const [notification, setNotification] = useState(null);
+
   const { addToCart, wishlist, addToWishlist, removeFromWishlist } = useApp();
 
   const getImageSrc = (image) => {
@@ -22,18 +25,16 @@ const ProductDetailPage = () => {
     return `data:image/jpeg;base64,${image}`;
   };
 
-  // ✅ FETCH PRODUCT DETAILS (always refetch when ID changes)
+  // ✅ FETCH PRODUCT DETAILS
   useEffect(() => {
     const fetchProductDetails = async () => {
       try {
         setIsLoading(true);
 
-        // if product is passed via navigation state, set it instantly
         if (location.state?.product) {
           setProduct(location.state.product);
         }
 
-        // always fetch fresh data for accuracy
         const res = await fetch(`http://localhost:5000/api/products/${id}`);
         if (!res.ok) throw new Error('Failed to fetch');
         const data = await res.json();
@@ -69,6 +70,8 @@ const ProductDetailPage = () => {
     fetchRelated();
   }, [product]);
 
+  const handleCloseNotification = () => setNotification(null);
+
   if (isLoading) return <LoadingSpinner />;
 
   if (!product)
@@ -78,14 +81,32 @@ const ProductDetailPage = () => {
         <Link to="/products" className="primary-btn">
           Back to Products
         </Link>
+
+        {notification && (
+          <Notification
+            message={notification.message}
+            type={notification.type}
+            onClose={handleCloseNotification}
+          />
+        )}
       </div>
     );
 
   const isInWishlist = wishlist?.some((item) => item._id === product._id);
 
   const handleWishlistToggle = () => {
-    if (isInWishlist) removeFromWishlist(product._id);
-    else addToWishlist(product);
+    if (isInWishlist) {
+      removeFromWishlist(product._id);
+      setNotification({ message: `${product.name} removed from wishlist!`, type: 'error' });
+    } else {
+      addToWishlist(product);
+      setNotification({ message: `${product.name} added to wishlist!`, type: 'success' });
+    }
+  };
+
+  const handleAddToCart = () => {
+    addToCart(product, quantity);
+    setNotification({ message: `${product.name} added to cart!`, type: 'success' });
   };
 
   return (
@@ -108,9 +129,7 @@ const ProductDetailPage = () => {
                   <button
                     key={i}
                     onClick={() => setSelectedImage(i)}
-                    className={`thumb-btn ${
-                      selectedImage === i ? 'active' : ''
-                    }`}
+                    className={`thumb-btn ${selectedImage === i ? 'active' : ''}`}
                   >
                     <img src={getImageSrc(img)} alt="" />
                   </button>
@@ -130,9 +149,7 @@ const ProductDetailPage = () => {
                   className={`star ${i < (product.rating || 0) ? 'filled' : ''}`}
                 />
               ))}
-              <span className="reviews-count">
-                ({product.reviews || 0} reviews)
-              </span>
+              <span className="reviews-count">({product.reviews || 0} reviews)</span>
             </div>
 
             <div className="price-section">
@@ -161,9 +178,7 @@ const ProductDetailPage = () => {
                   product.stock > 10 ? 'in-stock' : 'low-stock'
                 }`}
               >
-                {product.stock > 10
-                  ? 'In Stock'
-                  : `Only ${product.stock} left`}
+                {product.stock > 10 ? 'In Stock' : `Only ${product.stock} left`}
               </span>
             </div>
 
@@ -181,10 +196,7 @@ const ProductDetailPage = () => {
                 </button>
               </div>
 
-              <button
-                className="add-cart-btn"
-                onClick={() => addToCart(product, quantity)}
-              >
+              <button className="add-cart-btn" onClick={handleAddToCart}>
                 Add to Cart
               </button>
 
@@ -209,6 +221,15 @@ const ProductDetailPage = () => {
           </div>
         )}
       </div>
+
+      {/* Notification */}
+      {notification && (
+        <Notification
+          message={notification.message}
+          type={notification.type}
+          onClose={handleCloseNotification}
+        />
+      )}
     </div>
   );
 };
