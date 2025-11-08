@@ -40,19 +40,22 @@ const Header = () => {
     <header className="modern-header">
       <div className="header-container">
         {/* Left Section */}
-        <div className="header-left">
-          <button
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="mobile-menu-btn"
-            aria-label="Toggle menu"
-          >
-            {isMenuOpen ? <X className="icon" /> : <Menu className="icon" />}
-          </button>
 
-          <Link to="/" className="logo">
-            🕉️ <span>Sacred Rudraksha</span>
-          </Link>
-        </div>
+<div className="header-left">
+  <button
+    onClick={() => setIsMenuOpen(!isMenuOpen)}
+    className="mobile-menu-btn"
+    aria-label="Toggle menu"
+  >
+    {isMenuOpen ? <X className="icon" /> : <Menu className="icon" />}
+  </button>
+
+  <Link to="/" className="logo">
+    <img src="./images/logo.png" alt="Sacred Rudraksha Logo" className="logo-img" />
+    <span>Neplai Rudraksha</span>
+  </Link>
+</div>
+
 
         {/* Navigation */}
         <nav className={`nav ${isMenuOpen ? 'open' : ''}`}>
