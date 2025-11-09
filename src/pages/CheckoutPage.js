@@ -1,5 +1,5 @@
 // ✅ CheckoutPage.js
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect} from "react";
 import { useNavigate } from "react-router-dom";
 import { useApp } from "../context/AppContext";
 import { useAuth } from "../context/AuthContext";
@@ -129,7 +129,7 @@ const CheckoutPage = () => {
         break;
       case "email":
         if (!value.trim()) fieldErrors.email = "Email is required";
-        else if (!/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(value)) fieldErrors.email = "Invalid email address";
+        else if (!/^[\w.-]+@([\w-]+\.)+[\w-]{2,4}$/.test(value)) fieldErrors.email = "Invalid email address";
         else fieldErrors.email = "";
         break;
       case "phone":

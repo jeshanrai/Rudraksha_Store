@@ -2,5 +2,6 @@
 node_modules/
 
 # Package files
-package.json
-package-lock.json
+# Ignore package files in root only
+#package-lock.json
+#package.json
