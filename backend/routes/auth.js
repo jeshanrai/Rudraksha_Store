@@ -160,6 +160,7 @@ router.put('/profile', authMiddleware, async (req, res) => {
       { new: true, runValidators: true }
     ).select('-password');
 
+    
     res.json({ message: 'Profile updated successfully', user });
   } catch (error) {
     console.error('Update profile error:', error);
