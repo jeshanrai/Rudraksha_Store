@@ -18,7 +18,7 @@ const FeaturedSection = () => {
         const res = await fetch("https://rudraksha-store.onrender.com/api/products");
         const data = await res.json();
 
-        setProducts([...data, ...data]); // duplicated for continuous slider
+        setProducts([...data, ...data]);
       } catch (err) {
         console.error("Error fetching products:", err);
       } finally {
