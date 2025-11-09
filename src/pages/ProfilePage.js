@@ -35,7 +35,7 @@ useEffect(() => {
         if (mounted) setUserData(stored);
 
         // Fetch orders for this user with proper Authorization header
-        const res = await fetch(`https://rudraksha-store.onrender.com/api/orders/my-orders?userId=${stored.id}`, {
+        const res = await fetch(`${process.env.REACT_APP_API_URL}/api/orders/my-orders?userId=${stored.id}`, {
           headers: {
             Authorization: token ? `Bearer ${token}` : ''
           }

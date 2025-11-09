@@ -15,7 +15,7 @@ const FeaturedSection = () => {
   useEffect(() => {
     const getProducts = async () => {
       try {
-        const res = await fetch("https://rudraksha-store.onrender.com/api/products");
+        const res = await fetch(`${process.env.REACT_APP_API_URL}/api/products`);
         const data = await res.json();
 
         setProducts([...data, ...data]);

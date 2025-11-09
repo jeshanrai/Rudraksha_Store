@@ -35,7 +35,7 @@ const ProductDetailPage = () => {
           setProduct(location.state.product);
         }
 
-        const res = await fetch(`https://rudraksha-store.onrender.com/api/products/${id}`);
+        const res = await fetch(`${process.env.REACT_APP_API_URL}/api/products/${id}`);
         if (!res.ok) throw new Error('Failed to fetch');
         const data = await res.json();
         setProduct(data);
@@ -57,7 +57,7 @@ const ProductDetailPage = () => {
       if (!product?.mukhi) return;
       try {
         const res = await fetch(
-          `https://rudraksha-store.onrender.com/api/products?mukhi=${product.mukhi}`
+          `${process.env.REACT_APP_API_URL}/api/products?mukhi=${product.mukhi}`
         );
         const data = await res.json();
         setRelatedProducts(

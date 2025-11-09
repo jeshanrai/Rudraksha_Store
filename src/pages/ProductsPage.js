@@ -42,7 +42,7 @@ const [notification, setNotification] = useState(null);
         setIsLoading(true);
         setError(null);
 
-        const res = await fetch('https://rudraksha-store.onrender.com/api/products');
+        const res = await fetch(`${process.env.REACT_APP_API_URL}/api/products`);
         if (!res.ok) throw new Error('Failed to fetch products');
         const data = await res.json();
 

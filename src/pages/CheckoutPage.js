@@ -25,7 +25,7 @@ const StripePaymentForm = ({ finalTotal, onSuccess, setNotification }) => {
 
     try {
       // ✅ 1. Create PaymentIntent (backend)
-      const res = await fetch("https://rudraksha-store.onrender.com/api/payment/create-payment-intent", {
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/api/payment/create-payment-intent`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ amount: finalTotal }),
@@ -208,7 +208,7 @@ const validateForm = () => {
     };
 
     try {
-      const res = await fetch("http://localhost:5000/api/orders", {
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/api/orders`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -233,6 +233,8 @@ const validateForm = () => {
     }
   };
 
+
+  
   // ✅ COD Form submission
   const handleNormalOrder = (e) => {
     e.preventDefault();
