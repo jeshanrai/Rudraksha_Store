@@ -1,9 +1,9 @@
-// RegisterPage.js
-import React, { useState } from 'react';
+// src/pages/RegisterPage.js
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './RegisterPage.css';
 
-function RegisterPage() {
+const RegisterPage = () => {
   const navigate = useNavigate();
   const [form, setForm] = useState({
     username: '',
@@ -14,6 +14,33 @@ function RegisterPage() {
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  const slides = [
+    {
+      image: "/images/cover.png",
+      title: "Authentic Rudraksha Beads",
+      text: "Explore premium quality Rudraksha for spiritual and wellness benefits."
+    },
+    {
+      image: "/images/learnmore1.png",
+      title: "Handcrafted Collections",
+      text: "Discover unique Rudraksha malas and accessories crafted with care."
+    },
+    {
+      image: "/rudraksha_image/mantra.png",
+      title: "Spiritual Growth & Energy",
+      text: "Enhance meditation, focus, and positivity with our sacred beads."
+    }
+  ];
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % slides.length);
+    }, 4000);
+
+    return () => clearInterval(timer);
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -26,7 +53,6 @@ function RegisterPage() {
     setLoading(true);
 
     try {
-      // Normalize inputs
       const payload = {
         username: form.username.trim(),
         firstName: form.firstName.trim(),
@@ -43,9 +69,7 @@ function RegisterPage() {
 
       const data = await res.json();
 
-      if (!res.ok) {
-        throw new Error(data.message || 'Registration failed');
-      }
+      if (!res.ok) throw new Error(data.message || 'Registration failed');
 
       alert('✅ Registration successful! Please login.');
       navigate('/login', { replace: true });
@@ -57,10 +81,45 @@ function RegisterPage() {
   };
 
   return (
-    <div className="register-container">
-      <div className="register-card">
-        <h2>Create Account</h2>
-        <form onSubmit={handleSubmit}>
+    <div className="login-wrapper">
+      {/* LEFT PANEL */}
+      <div className="left-panel">
+        <div className="slider-container">
+          {slides.map((slide, index) => (
+            <div
+              key={index}
+              className={`slide-item ${currentSlide === index ? "active" : ""}`}
+              style={{ backgroundImage: `url(${slide.image})` }}
+            >
+              <div className="slide-overlay">
+                <h3 className="slide-title">{slide.title}</h3>
+                <p className="slide-text">{slide.text}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Dots */}
+        <div className="dots">
+          {slides.map((_, index) => (
+            <span
+              key={index}
+              className={`dot ${currentSlide === index ? "active" : ""}`}
+              onClick={() => setCurrentSlide(index)}
+            ></span>
+          ))}
+        </div>
+      </div>
+
+      {/* RIGHT PANEL */}
+      <div className="right-panel">
+        <h1 className="brand-title">Nepali Rudraksha</h1>
+        <h2 className="welcome-title">Create Your Account</h2>
+
+        <form className="login-form" onSubmit={handleSubmit}>
+          {error && <div className="error-box">{error}</div>}
+
+          {/* First Name + Last Name side by side */}
           <div className="name-group">
             <input
               type="text"
@@ -69,7 +128,6 @@ function RegisterPage() {
               value={form.firstName}
               onChange={handleChange}
               required
-              autoComplete="given-name"
             />
             <input
               type="text"
@@ -78,9 +136,10 @@ function RegisterPage() {
               value={form.lastName}
               onChange={handleChange}
               required
-              autoComplete="family-name"
             />
           </div>
+
+          {/* Remaining inputs stacked vertically */}
           <input
             type="text"
             name="username"
@@ -88,7 +147,6 @@ function RegisterPage() {
             value={form.username}
             onChange={handleChange}
             required
-            autoComplete="username"
           />
           <input
             type="email"
@@ -97,7 +155,6 @@ function RegisterPage() {
             value={form.email}
             onChange={handleChange}
             required
-            autoComplete="email"
           />
           <input
             type="password"
@@ -106,16 +163,24 @@ function RegisterPage() {
             value={form.password}
             onChange={handleChange}
             required
-            autoComplete="new-password"
           />
-          <button type="submit" disabled={loading}>
+
+          <button type="submit" className="signin-btn" disabled={loading}>
             {loading ? 'Registering...' : 'Register'}
+          </button>
+
+          <div className="divider">or</div>
+
+          <button type="button" className="google-btn">
+            <img
+              src="https://developers.google.com/identity/images/g-logo.png"
+              alt="Google"
+            />
+            Sign up with Google
           </button>
         </form>
 
-        {error && <p className="error">{error}</p>}
-
-        <p className="login-text">
+        <p className="new-user">
           Already have an account?{' '}
           <span onClick={() => navigate('/login', { replace: true })} style={{ cursor: 'pointer', color: 'blue' }}>
             Login here
@@ -124,6 +189,6 @@ function RegisterPage() {
       </div>
     </div>
   );
-}
+};
 
 export default RegisterPage;

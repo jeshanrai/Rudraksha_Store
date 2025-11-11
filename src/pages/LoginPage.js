@@ -164,7 +164,7 @@ useEffect(() => {
         </form>
 
         <p className="new-user">
-          New Lovebirds? <Link to="/register">Create Account</Link>
+          New User? <Link to="/register">Create Account</Link>
         </p>
       </div>
     </div>
