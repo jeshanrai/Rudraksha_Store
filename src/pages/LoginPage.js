@@ -1,8 +1,10 @@
 // src/pages/LoginPage.js
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import './LoginPage.css';
+// import BirdImage from '../assets/bird-illustration.png'; // ✅ Use your illustration here
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -12,7 +14,6 @@ const LoginPage = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // Auto-redirect if already logged in
   useEffect(() => {
     if (user) {
       if (user.role === 'admin') navigate('/admin/dashboard', { replace: true });
@@ -22,7 +23,6 @@ const LoginPage = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    // Trim both start and end to prevent extra spaces
     setFormData({ ...formData, [name]: value.trim() });
   };
 
@@ -32,7 +32,6 @@ const LoginPage = () => {
     setLoading(true);
 
     try {
-      // Normalize email
       const email = formData.email.toLowerCase().trim();
       const password = formData.password.trim();
 
@@ -45,24 +44,87 @@ const LoginPage = () => {
         setError(loginError || 'Invalid credentials');
       }
     } catch (err) {
-      console.error('Login submission error:', err);
+      console.error('Login error:', err);
       setError('Something went wrong. Please try again.');
     } finally {
       setLoading(false);
     }
   };
+ const slides = [
+  {
+    image: "/images/cover.png",
+    title: "Authentic Rudraksha Beads",
+    text: "Explore premium quality Rudraksha for spiritual and wellness benefits."
+  },
+  {
+    image: "/images/learnmore1.png",
+    title: "Handcrafted Collections",
+    text: "Discover unique Rudraksha malas and accessories crafted with care."
+  },
+  {
+    image: "/rudraksha_image/mantra.png",
+    title: "Spiritual Growth & Energy",
+    text: "Enhance meditation, focus, and positivity with our sacred beads."
+  }
+];
+
+
+const [currentSlide, setCurrentSlide] = useState(0);
+
+useEffect(() => {
+  const timer = setInterval(() => {
+    setCurrentSlide((prev) => (prev + 1) % slides.length);
+  }, 4000);
+
+  return () => clearInterval(timer);
+}, []);
 
   return (
-    <div className="login-container">
-      <div className="login-card">
-        <h2>Sign in to your account</h2>
-        <p className="register-link">
-          Or <Link to="/register">create a new account</Link>
-        </p>
+    <div className="login-wrapper">
+      {/* LEFT SIDE */}
+{/* LEFT SIDE */}
+<div className="left-panel">
 
-        <form onSubmit={handleSubmit}>
-          {error && <div className="error">{error}</div>}
+  <div className="slider-container">
+    {slides.map((slide, index) => (
+      <div
+        key={index}
+        className={`slide-item ${currentSlide === index ? "active" : ""}`}
+        style={{ backgroundImage: `url(${slide.image})` }}
+      >
+        <div className="slide-overlay">
+          <h3 className="slide-title">{slide.title}</h3>
+          <p className="slide-text">{slide.text}</p>
+        </div>
+      </div>
+    ))}
+  </div>
 
+  {/* Dots */}
+  <div className="dots">
+    {slides.map((_, index) => (
+      <span
+        key={index}
+        className={`dot ${currentSlide === index ? "active" : ""}`}
+        onClick={() => setCurrentSlide(index)}
+      ></span>
+    ))}
+  </div>
+
+</div>
+
+
+
+      {/* RIGHT SIDE */}
+      <div className="right-panel">
+        <h1 className="brand-title">Nepali Rudraksha</h1>
+
+        <h2 className="welcome-title">Welcome to Nepali Rudraksha</h2>
+
+        <form className="login-form" onSubmit={handleSubmit}>
+          {error && <div className="error-box">{error}</div>}
+
+          <label className="input-label">Email</label>
           <input
             type="email"
             name="email"
@@ -70,9 +132,9 @@ const LoginPage = () => {
             value={formData.email}
             onChange={handleChange}
             required
-            autoComplete="email"
           />
 
+          <label className="input-label">Password</label>
           <input
             type="password"
             name="password"
@@ -80,13 +142,30 @@ const LoginPage = () => {
             value={formData.password}
             onChange={handleChange}
             required
-            autoComplete="current-password"
           />
 
-          <button type="submit" disabled={loading}>
+          <Link className="forgot-link" to="/forgot-password">
+            Forgot password?
+          </Link>
+
+          <button type="submit" className="signin-btn" disabled={loading}>
             {loading ? 'Signing in...' : 'Sign in'}
           </button>
+
+          <div className="divider">or</div>
+
+          <button type="button" className="google-btn">
+            <img
+              src="https://developers.google.com/identity/images/g-logo.png"
+              alt="Google"
+            />
+            Sign in with Google
+          </button>
         </form>
+
+        <p className="new-user">
+          New Lovebirds? <Link to="/register">Create Account</Link>
+        </p>
       </div>
     </div>
   );
