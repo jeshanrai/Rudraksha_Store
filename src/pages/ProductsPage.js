@@ -4,6 +4,7 @@ import { Filter, Grid, List } from 'lucide-react';
 import ProductCard from '../components/ProductCard/ProductCard';
 import Notification from '../components/Notification';
 import LoadingSpinner from '../components/common/LoadingSpinner';
+import './ProductsPage.css';
 
 const ProductsPage = () => {
   const [products, setProducts] = useState([]);
@@ -130,6 +131,8 @@ const [notification, setNotification] = useState(null);
 
           <div className="products-controls">
             {/* 🔍 Search Box */}
+
+            <div className="box1">
             <input
               type="text"
               placeholder="Search products..."
@@ -155,8 +158,10 @@ const [notification, setNotification] = useState(null);
                 <List className="view-icon" />
               </button>
             </div>
+            </div>
 
             {/* 🔽 Sort Dropdown */}
+            <div className="box2">
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
@@ -178,10 +183,16 @@ const [notification, setNotification] = useState(null);
             </button>
           </div>
         </div>
+        </div>
+
 
         {/* ================== FILTERS + PRODUCTS ================== */}
         <div className="products-content">
           {/* FILTER SIDEBAR */}
+          {/* Overlay for mobile */}
+{showFilters && <div className="filters-overlay active" onClick={() => setShowFilters(false)}></div>}
+
+          
           <aside
             className={`filters-sidebar ${
               showFilters ? 'filters-sidebar-open' : ''

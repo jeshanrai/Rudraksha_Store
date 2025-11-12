@@ -7,6 +7,10 @@
   overflow: visible;
 }
 
+body{
+  overflow-x: hidden;
+}
+
 .section-title {
   text-align: center;
   font-size: 2.2rem;
@@ -108,6 +112,21 @@
   100% { transform: translateY(0px); }
 }
 
+
+@media (max-width: 500px) {
+  .primary-btn, 
+  .secondary-btn {
+    width: 100%;
+    padding: 0.6rem 1rem;
+    margin-left: 0;
+    margin-bottom: 0.8rem;
+    text-align: center;
+  }
+
+  .secondary-btn {
+    margin-bottom: 0;
+  }
+}
 
 .categories-section {
   padding: 40px 0;

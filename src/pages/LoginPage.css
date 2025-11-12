@@ -250,5 +250,10 @@
   .right-panel {
     width: 95%;
     border-radius: 16px;
-    height: fit-content;  }
+    height: fit-content !important;  }
+    .login-wrapper{
+      height: fit-content;
+      padding: 37px 0;
+      overflow: hidden !important;
+    }
 }

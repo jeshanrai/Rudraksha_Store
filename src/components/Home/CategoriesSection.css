@@ -1,37 +1,72 @@
+/* ==========================
+   Categories Section
+========================== */
 .categories-section {
   padding: 50px 0;
   background-color: #f5f5f5 !important;
 }
 
+/* ==========================
+   Carousel
+========================== */
 .categories-carousel {
   display: flex;
   overflow-x: auto;
-  scroll-behavior: smooth;
+  overflow-y: hidden;
   gap: 20px;
-  height: 360px; /* ⬆️ Increased height */
+  height: 360px;
   align-items: center;
   padding-bottom: 10px;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y pinch-zoom; /* Allow vertical scrolling on mobile */
+  cursor: grab;
 }
 
+.categories-carousel:active {
+  cursor: grabbing;
+}
+
+/* Hide scrollbar */
+.categories-carousel::-webkit-scrollbar {
+  display: none;
+}
+
+/* Prevent scroll-behavior interference on touch devices */
+@media (pointer: coarse) {
+  .categories-carousel {
+    scroll-behavior: auto;
+  }
+}
+
+/* ==========================
+   Mukhi Card
+========================== */
 .mukhi-card {
   background: #fff;
   border-radius: 16px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   min-width: 230px;
-  height: 320px; /* ⬆️ Taller card */
+  height: 320px;
   text-align: center;
-  transition: transform 0.3s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
   cursor: pointer;
-  padding: 14px;
+
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  flex-shrink: 0;
+  user-select: none; /* prevent text selection during drag */
 }
 
 .mukhi-card:hover {
   transform: translateY(-5px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
+/* ==========================
+   Mukhi Image
+========================== */
 .mukhi-image-wrapper {
   flex: 1;
   display: flex;
@@ -42,8 +77,14 @@
 .mukhi-img {
   height: 140px;
   object-fit: contain;
+  max-width: 100%;
+  user-select: none;
+  pointer-events: none;
 }
 
+/* ==========================
+   Mukhi Info (Name/Price/etc)
+========================== */
 .mukhi-info {
   margin-top: 10px;
 }
@@ -64,6 +105,9 @@
   font-size: 0.9rem;
 }
 
+/* ==========================
+   View Button
+========================== */
 .view-btn {
   margin-top: 8px;
   background: #f4f4f4;
@@ -76,4 +120,68 @@
 
 .view-btn:hover {
   background: #ddd;
+}
+
+/* ==========================
+   Responsive Adjustments
+========================== */
+@media (max-width: 1024px) {
+  .categories-carousel {
+    gap: 16px;
+    height: 340px;
+  }
+
+  .mukhi-card {
+    min-width: 200px;
+    height: 300px;
+  }
+
+  .mukhi-img {
+    height: 130px;
+  }
+}
+
+@media (max-width: 768px) {
+  .categories-section {
+    padding: 30px 0;
+  }
+
+  .categories-carousel {
+    gap: 14px;
+    height: 320px;
+    padding: 0 10px 10px;
+  }
+
+  .mukhi-card {
+    min-width: 180px;
+    height: 300px;
+  }
+
+  .mukhi-img {
+    height: 120px;
+  }
+
+  .mukhi-name {
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .categories-carousel {
+    gap: 12px;
+    height: 280px;
+  }
+
+  .mukhi-card {
+    min-width: 160px;
+    height: 260px;
+  }
+
+  .mukhi-img {
+    height: 100px;
+  }
+
+  .mukhi-name {
+    font-size: 0.9rem;
+  }
 }

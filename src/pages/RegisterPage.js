@@ -81,7 +81,7 @@ const RegisterPage = () => {
   };
 
   return (
-    <div className="login-wrapper">
+    <div className="login-wrapper-register">
       {/* LEFT PANEL */}
       <div className="left-panel">
         <div className="slider-container">
@@ -112,75 +112,76 @@ const RegisterPage = () => {
       </div>
 
       {/* RIGHT PANEL */}
-      <div className="right-panel">
+      <div className="right-panel-register">
         <h1 className="brand-title">Nepali Rudraksha</h1>
         <h2 className="welcome-title">Create Your Account</h2>
 
-        <form className="login-form" onSubmit={handleSubmit}>
-          <div className="error-box-outer">
-          {error && <div className="error-box">{error}</div>}
-          </div>
+       <form className="register-form" onSubmit={handleSubmit}>
+  <div className="error-box-outer">
+    {error && <div className="error-box">{error}</div>}
+  </div>
 
-          {/* First Name + Last Name side by side */}
-          <div className="name-group">
-            <input
-              type="text"
-              name="firstName"
-              placeholder="First Name"
-              value={form.firstName}
-              onChange={handleChange}
-              required
-            />
-            <input
-              type="text"
-              name="lastName"
-              placeholder="Last Name"
-              value={form.lastName}
-              onChange={handleChange}
-              required
-            />
-          </div>
+  {/* First Name + Last Name side by side */}
+  <div className="name-group">
+    <input
+      type="text"
+      name="firstName"
+      placeholder="First Name"
+      value={form.firstName}
+      onChange={handleChange}
+      required
+    />
+    <input
+      type="text"
+      name="lastName"
+      placeholder="Last Name"
+      value={form.lastName}
+      onChange={handleChange}
+      required
+    />
+  </div>
 
-          {/* Remaining inputs stacked vertically */}
-          <input
-            type="text"
-            name="username"
-            placeholder="Username"
-            value={form.username}
-            onChange={handleChange}
-            required
-          />
-          <input
-            type="email"
-            name="email"
-            placeholder="Email Address"
-            value={form.email}
-            onChange={handleChange}
-            required
-          />
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            value={form.password}
-            onChange={handleChange}
-            required
-          />
+  {/* Remaining inputs stacked vertically */}
+  <input
+    type="text"
+    name="username"
+    placeholder="Username"
+    value={form.username}
+    onChange={handleChange}
+    required
+  />
+  <input
+    type="email"
+    name="email"
+    placeholder="Email Address"
+    value={form.email}
+    onChange={handleChange}
+    required
+  />
+  <input
+    type="password"
+    name="password"
+    placeholder="Password"
+    value={form.password}
+    onChange={handleChange}
+    required
+  />
 
-          <button type="submit" className="signin-btn" disabled={loading}>
-            {loading ? 'Registering...' : 'Register'}
-          </button>
+  <button type="submit" className="signin-btn" disabled={loading}>
+    {loading ? 'Registering...' : 'Register'}
+  </button>
 
-          <div className="divider">or</div>
+  <div className="divider">or</div>
 
-          <button type="button" className="google-btn">
-            <img
-              src="https://developers.google.com/identity/images/g-logo.png"
-              alt="Google"
-            />
-            Sign up with Google
-          </button>
-        </form>
+  <button type="button" className="google-btn">
+    <img
+      src="https://developers.google.com/identity/images/g-logo.png"
+      alt="Google"
+    />
+    Sign up with Google
+  </button>
+</form>
+
 
         <p className="new-user">
           Already have an account?{' '}

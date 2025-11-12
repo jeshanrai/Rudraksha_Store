@@ -1,6 +1,6 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import "../../pages/homepage.css";
+import "./CategoriesSection.css";
 
 const mukhiData = Array.from({ length: 21 }, (_, i) => i + 1)
   .filter((num) => num !== 1)
@@ -23,7 +23,9 @@ const CategoriesSection = () => {
     scrollLeft: 0,
   });
 
-  // ✅ Intersection Observer → Pause when user scrolls away
+  const duplicatedList = [...mukhiData, ...mukhiData]; // for infinite scroll
+
+  // Intersection Observer + mobile fallback
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -32,60 +34,100 @@ const CategoriesSection = () => {
       { threshold: 0.2 }
     );
 
-    observer.observe(sectionRef.current);
+    const sectionEl = sectionRef.current;
+    observer.observe(sectionEl);
+
+    if (window.innerWidth < 768) {
+      isVisible.current = true;
+    }
+
     return () => observer.disconnect();
   }, []);
 
-  // ✅ Mouse drag handlers
+  // Mouse drag handlers
   const handleMouseDown = (e) => {
     const carousel = carouselRef.current;
+    const rect = carousel.getBoundingClientRect();
     dragData.current.isDragging = true;
-    dragData.current.startX = e.pageX - carousel.offsetLeft;
+    dragData.current.startX = e.pageX - rect.left;
     dragData.current.scrollLeft = carousel.scrollLeft;
+  };
+
+  const handleMouseMove = (e) => {
+    if (!dragData.current.isDragging) return;
+    e.preventDefault();
+    const carousel = carouselRef.current;
+    const rect = carousel.getBoundingClientRect();
+    const x = e.pageX - rect.left;
+    const walk = (x - dragData.current.startX) * 2; // speed
+    carousel.scrollLeft = dragData.current.scrollLeft - walk;
   };
 
   const stopDragging = () => {
     dragData.current.isDragging = false;
   };
 
-  const handleMouseMove = (e) => {
+  // Touch drag handlers
+  const handleTouchStart = (e) => {
+    const carousel = carouselRef.current;
+    const rect = carousel.getBoundingClientRect();
+    dragData.current.isDragging = true;
+    dragData.current.startX = e.touches[0].pageX - rect.left;
+    dragData.current.scrollLeft = carousel.scrollLeft;
+  };
+
+  const handleTouchMove = (e) => {
     if (!dragData.current.isDragging) return;
     e.preventDefault();
-
     const carousel = carouselRef.current;
-    const x = e.pageX - carousel.offsetLeft;
+    const rect = carousel.getBoundingClientRect();
+    const x = e.touches[0].pageX - rect.left;
     const walk = (x - dragData.current.startX) * 2;
     carousel.scrollLeft = dragData.current.scrollLeft - walk;
   };
 
-  // ✅ Optimized Auto Slide
+  const handleTouchEnd = () => {
+    dragData.current.isDragging = false;
+  };
+
+  // Auto-slide infinite loop
   useEffect(() => {
     const carousel = carouselRef.current;
     let reqId;
 
     const autoSlide = () => {
-      // ✅ Pause conditions
       if (
         !dragData.current.isDragging &&
         document.visibilityState === "visible" &&
         isVisible.current
       ) {
-        carousel.scrollLeft += 2;
+        carousel.scrollLeft += 1.2; // adjust speed
 
+        // Reset for infinite scroll
         if (carousel.scrollLeft >= carousel.scrollWidth / 2) {
           carousel.scrollLeft = 0;
         }
       }
-
       reqId = requestAnimationFrame(autoSlide);
     };
 
     reqId = requestAnimationFrame(autoSlide);
-    return () => cancelAnimationFrame(reqId);
-  }, []);
 
-  // ✅ Infinite loop data
-  const duplicatedList = [...mukhiData, ...mukhiData];
+    const onVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        reqId = requestAnimationFrame(autoSlide);
+      } else {
+        cancelAnimationFrame(reqId);
+      }
+    };
+
+    document.addEventListener("visibilitychange", onVisibilityChange);
+
+    return () => {
+      cancelAnimationFrame(reqId);
+      document.removeEventListener("visibilitychange", onVisibilityChange);
+    };
+  }, []);
 
   return (
     <section className="categories-section" ref={sectionRef}>
@@ -96,9 +138,12 @@ const CategoriesSection = () => {
           className="categories-carousel"
           ref={carouselRef}
           onMouseDown={handleMouseDown}
-          onMouseLeave={stopDragging}
-          onMouseUp={stopDragging}
           onMouseMove={handleMouseMove}
+          onMouseUp={stopDragging}
+          onMouseLeave={stopDragging}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
         >
           {duplicatedList.map((item, index) => (
             <div
@@ -109,13 +154,8 @@ const CategoriesSection = () => {
               <div className="mukhi-title">
                 {item.mukhi} Mukhi Nepali Rudraksha
               </div>
-
               <div className="mukhi-image-wrapper">
-                <img
-                  src={item.image}
-                  alt={item.name}
-                  className="mukhi-img"
-                />
+                <img src={item.image} alt={item.name} className="mukhi-img" />
               </div>
             </div>
           ))}
