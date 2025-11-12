@@ -198,6 +198,8 @@
   color: #777;
 }
 
+
+
 /* Google button */
 .google-btn {
   width: 100%;
@@ -248,5 +250,5 @@
   .right-panel {
     width: 95%;
     border-radius: 16px;
-  }
+    height: fit-content;  }
 }

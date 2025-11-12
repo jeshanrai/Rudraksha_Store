@@ -231,12 +231,20 @@
 .error-box {
   background: #ffcccc;
   color: #990000;
-  padding: 10px;
-  border-radius: 6px;
-  margin-bottom: 10px;
   text-align: center;
 }
+.error-box {
+  background: #ffcccc;
+  color: #990000;
+  text-align: center;
+  padding: 5px;
+  border-radius: 6px;
+}
 
+.error-box-outer {
+  margin-bottom: 10px;
+  min-height: 35px;
+} 
 /* ===== RESPONSIVE ===== */
 @media (max-width: 900px) {
   .left-panel {

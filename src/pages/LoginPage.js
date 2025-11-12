@@ -153,6 +153,16 @@ useEffect(() => {
           <button type="submit" className="signin-btn" disabled={loading}>
             {loading ? 'Signing in...' : 'Sign in'}
           </button>
+
+          <div className="divider">or</div>
+
+          <button type="button" className="google-btn">
+            <img
+              src="https://developers.google.com/identity/images/g-logo.png"
+              alt="Google"
+            />
+            Sign in with Google
+          </button>
         </form>
 
         <p className="new-user">

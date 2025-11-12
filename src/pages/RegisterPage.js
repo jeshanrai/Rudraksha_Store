@@ -117,7 +117,9 @@ const RegisterPage = () => {
         <h2 className="welcome-title">Create Your Account</h2>
 
         <form className="login-form" onSubmit={handleSubmit}>
+          <div className="error-box-outer">
           {error && <div className="error-box">{error}</div>}
+          </div>
 
           {/* First Name + Last Name side by side */}
           <div className="name-group">
@@ -167,6 +169,16 @@ const RegisterPage = () => {
 
           <button type="submit" className="signin-btn" disabled={loading}>
             {loading ? 'Registering...' : 'Register'}
+          </button>
+
+          <div className="divider">or</div>
+
+          <button type="button" className="google-btn">
+            <img
+              src="https://developers.google.com/identity/images/g-logo.png"
+              alt="Google"
+            />
+            Sign up with Google
           </button>
         </form>
 
