@@ -122,7 +122,9 @@ useEffect(() => {
         <h2 className="welcome-title">Welcome to Nepali Rudraksha</h2>
 
         <form className="login-form" onSubmit={handleSubmit}>
+          <div className="error-box-outer">
           {error && <div className="error-box">{error}</div>}
+          </div>
 
           <label className="input-label">Email</label>
           <input
@@ -150,16 +152,6 @@ useEffect(() => {
 
           <button type="submit" className="signin-btn" disabled={loading}>
             {loading ? 'Signing in...' : 'Sign in'}
-          </button>
-
-          <div className="divider">or</div>
-
-          <button type="button" className="google-btn">
-            <img
-              src="https://developers.google.com/identity/images/g-logo.png"
-              alt="Google"
-            />
-            Sign in with Google
           </button>
         </form>
 

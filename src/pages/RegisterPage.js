@@ -168,16 +168,6 @@ const RegisterPage = () => {
           <button type="submit" className="signin-btn" disabled={loading}>
             {loading ? 'Registering...' : 'Register'}
           </button>
-
-          <div className="divider">or</div>
-
-          <button type="button" className="google-btn">
-            <img
-              src="https://developers.google.com/identity/images/g-logo.png"
-              alt="Google"
-            />
-            Sign up with Google
-          </button>
         </form>
 
         <p className="new-user">

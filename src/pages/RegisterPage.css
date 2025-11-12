@@ -1,6 +1,6 @@
 /* ===== GLOBAL HEADER HEIGHT ===== */
 :root {
-  --header-height: 66px; /* Adjust if needed */
+  --header-height: 66px;
 }
 
 /* ===== FULL WRAPPER BELOW HEADER ===== */
@@ -12,23 +12,20 @@
   align-items: center;
   justify-content: center;
   padding: 0;
-  overflow: hidden; /* Prevent scroll */
+  overflow: hidden;
 }
 
-/* ===== LEFT PANEL FULL IMAGE ===== */
+/* LEFT PANEL FULL IMAGE */
 .left-panel {
   width: 50%;
   height: 90%;
-  border-radius: 16px 0 0 16px;
-  position: relative;
-  overflow: hidden; /* Image stays inside rounded corner */
   background: #a9d5c5;
   color: #fff;
-  padding: 20px 30px;
+  padding: 40px 30px;
   text-align: center;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+  border-radius: 16px 0 0 16px;
+  position: relative;
+  overflow: hidden;
 }
 
 /* SLIDER CONTAINER */
@@ -41,8 +38,8 @@
 .slide-item {
   position: absolute;
   inset: 0;
-  background-size: cover;        
-  background-position: center;   
+  background-size: cover;
+  background-position: center;
   background-repeat: no-repeat;
   opacity: 0;
   transition: opacity 0.8s ease;
@@ -61,7 +58,6 @@
   max-width: 300px;
   color: #fff;
   text-shadow: 0 2px 10px rgba(0,0,0,0.5);
-  text-align: center;
 }
 
 .slide-title {
@@ -73,48 +69,65 @@
 .slide-text {
   font-size: 15px;
   line-height: 1.4;
-  margin-top: 4px;
 }
 
 /* DOTS */
 .dots {
   position: absolute;
   bottom: 40px;
-  left: 50%;              
-  transform: translateX(-50%); 
+  left: 50%;
+  transform: translateX(-50%);
   display: flex;
   gap: 10px;
   z-index: 10;
 }
 
 .dot {
-  height: 12px;
-  width: 12px;
-  background: rgba(255,255,255,0.5);
+  height: 10px;
+  width: 10px;
+  background: #ffffff66;
   border-radius: 50%;
   cursor: pointer;
   transition: 0.3s;
 }
 
 .dot.active {
-  background: white;
+  background: #fff;
   transform: scale(1.3);
 }
 
-/* ===== RIGHT PANEL ===== */
+/* ===== PANELS ===== */
 .right-panel {
-  width: 45%;
+  width: 40%;
   height: 90%;
+  padding: 50px 60px;
   background: white;
   border-radius: 0 16px 16px 0;
-  padding: 40px 60px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  overflow-y: hidden; /* Scroll if content grows */
 }
 
-/* BRAND TITLES */
+/* LEFT PANEL ILLUSTRATION TEXT */
+.illustration {
+  width: 60%;
+  margin-bottom: 20px;
+}
+
+.left-title {
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.left-desc {
+  font-size: 14px;
+  opacity: 0.85;
+  max-width: 300px;
+  margin-bottom: 30px;
+}
+
+/* ===== RIGHT Panel Content ===== */
 .brand-title {
   font-family: "Pacifico", cursive;
   font-size: 32px;
@@ -123,7 +136,7 @@
 
 .welcome-title {
   font-size: 20px;
-  margin-bottom: 20px;
+  margin-bottom: 30px;
   color: #333;
 }
 
@@ -131,8 +144,6 @@
 .login-form {
   width: 100%;
   max-width: 350px;
-  display: flex;
-  flex-direction: column;
 }
 
 .input-label {
@@ -140,30 +151,17 @@
   margin-top: 10px;
 }
 
-/* INPUT FIELDS */
 .login-form input {
   width: 100%;
   padding: 12px;
   margin-top: 5px;
   border-radius: 8px;
   border: 1px solid #ccc;
-  outline: none;
   transition: 0.2s;
 }
 
 .login-form input:focus {
   border-color: #e52e71;
-}
-
-/* Mixed layout: First + Last name side by side */
-.name-group {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 15px;
-}
-
-.name-group input {
-  flex: 1;
 }
 
 /* Forgot password */
@@ -175,7 +173,7 @@
   color: #888;
 }
 
-/* Sign in/Register button */
+/* Sign in button */
 .signin-btn {
   margin-top: 20px;
   width: 100%;
@@ -191,7 +189,6 @@
 
 .signin-btn:hover {
   background: #222;
-  transform: translateY(-1px);
 }
 
 /* Divider */
@@ -213,12 +210,6 @@
   justify-content: center;
   gap: 10px;
   cursor: pointer;
-  transition: 0.2s;
-}
-
-.google-btn:hover {
-  opacity: 0.9;
-  transform: translateY(-1px);
 }
 
 .google-btn img {
@@ -227,15 +218,13 @@
 
 /* New user link */
 .new-user {
-  margin-top: 15px;
+  margin-top: 25px;
   color: #555;
 }
 
-.new-user a,
-.new-user span {
+.new-user a {
   color: #e52e71;
   font-weight: 600;
-  cursor: pointer;
 }
 
 /* Error box */
@@ -254,13 +243,7 @@
     display: none;
   }
   .right-panel {
-    width: 100%;
+    width: 95%;
     border-radius: 16px;
-  }
-}
-
-@media (max-width: 500px) {
-  .name-group {
-    flex-direction: column;
   }
 }
